@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "136045114736",
+    "project_id": "freelance-ibuy-app",
+    "storage_bucket": "freelance-ibuy-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136045114736:android:34c260c048cee26c9b8bb5",
+        "android_client_info": {
+          "package_name": "com.example.freelance_ibuy_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "136045114736-v3dvn5316j9i9qjj3ecdsbocsngnptji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.freelance_ibuy_app",
+            "certificate_hash": "88a36e07c176fa53f8db39e0a6895c911a6e2480"
+          }
+        },
+        {
+          "client_id": "136045114736-1qnkoh2tq74458n5etprlfg2g1h3us5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGA4my9XwvxW7aSoYRRDMYUbhxjTSD08s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "136045114736-1qnkoh2tq74458n5etprlfg2g1h3us5e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "136045114736-safmmph166frjj6qho5iiokf3cb1f4e0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.freelanceIbuyApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
