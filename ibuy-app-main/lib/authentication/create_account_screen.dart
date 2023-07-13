@@ -109,6 +109,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             );
           }),
         );
+      } on FirebaseAuthException catch (a) {
+        setState(() {
+          isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              a.message.toString(),
+            ),
+            backgroundColor: Theme.of(context).errorColor,
+          ),
+        );
       } catch (e) {
         setState(() {
           isLoading = false;

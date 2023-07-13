@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/authentication/create_account_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 
-import '../widgets/create_account_widget.dart';
-
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -46,13 +44,17 @@ class WelcomeScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
                 child: InkWell(
-                  onTap: () => showModalBottomSheet<dynamic>(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                      ),
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (context) => const CreateAccountWidget()),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => CreateAccountScreen()));
+                    /*showModalBottomSheet<dynamic>(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35.0),
+                        ),
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context) => const CreateAccountWidget());*/
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: const Color(0xffFEC107),
@@ -62,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
                     height: 50,
                     child: const Center(
                         child: Text(
-                      "GET STARTED",
+                      /*"GET STARTED"*/ "CREATE ACCOUNT",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
