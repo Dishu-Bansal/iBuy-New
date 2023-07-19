@@ -1,13 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/authentication/login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //if (Firebase.apps.isNotEmpty) {
   await Firebase.initializeApp(
-    name: "iBuy Admin App",
     options: const FirebaseOptions(
       apiKey: "AIzaSyB-iG_rSPBgG6c4xZuRZCbMcrifR8WiG-M",
       appId: "1:136045114736:web:6b44b8a51c055d819b8bb5",
