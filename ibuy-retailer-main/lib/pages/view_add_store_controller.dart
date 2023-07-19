@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/models/store_modal.dart';
@@ -17,8 +18,10 @@ class ViewAddStoreController extends GetxController {
     checkedStores.clear();
     checked.clear();
     try {
-      var snapshot =
-          await FirebaseFirestore.instance.collection("stores").get();
+      var snapshot = await FirebaseFirestore.instance
+          .collection("stores")
+          .where("createdBy", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .get();
       for (var element in snapshot.docs) {
         stores.add(StoreModal.fromMap(element));
         checked.add(false);

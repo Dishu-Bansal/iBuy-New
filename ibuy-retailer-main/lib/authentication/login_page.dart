@@ -34,8 +34,6 @@ class LoginPage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    const Text("Hi, Welcome back 🙏"),
                     const SizedBox(height: 50),
                     TextFormField(
                       controller: loginController.emailController,
