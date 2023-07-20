@@ -3,13 +3,21 @@ import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
 class EditStore extends StatelessWidget {
-  const EditStore({super.key});
+  EditStore({super.key});
+  final storeController = Get.find<ViewAddStoreController>();
+  String id = "";
+
+  @override
+  StatelessElement createElement() {
+    storeController.prepareEditStore();
+    id = storeController.checkedStores[0];
+    return super.createElement();
+  }
 
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final storeController = Get.find<ViewAddStoreController>();
-    storeController.prepareEditStore();
+
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
@@ -29,7 +37,7 @@ class EditStore extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    "Store ID: ${storeController.checkedStores[0]}",
+                    "Store ID: ${id}",
                     style: const TextStyle(
                       color: Colors.black45,
                       fontSize: 16,
@@ -210,12 +218,12 @@ class EditStore extends StatelessWidget {
                         ),
                       ),
                     ),
-                    validator: (value) {
+                    /*validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Store address 2 cannot be empty";
                       }
                       return null;
-                    },
+                    },*/
                   ),
                 ),
                 const SizedBox(
@@ -339,7 +347,7 @@ class EditStore extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           if (formKey.currentState!.validate()) {
-                            storeController.saveStore();
+                            storeController.saveStore(id);
                           } else {
                             //display error message with snackbar
                             Get.snackbar(

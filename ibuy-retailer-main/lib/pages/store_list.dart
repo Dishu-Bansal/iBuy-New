@@ -161,7 +161,7 @@ class _StoreListState extends State<StoreList> {
                           GestureDetector(
                             onTap: () {
                               if (storeController.checkedStores.length == 1) {
-                                Get.to(() => const EditStore());
+                                Get.to(() => EditStore());
                                 setState(() {});
                               } else {
                                 //display erroe message with snackbar with Getx

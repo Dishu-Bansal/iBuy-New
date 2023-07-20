@@ -73,37 +73,34 @@ class ViewAddStoreController extends GetxController {
   final add1 = TextEditingController();
   final add2 = TextEditingController();
 
-  void saveStore() {
+  void saveStore(String id) {
     //update store
-    if (checkedStores.length == 1) {
-      FirebaseFirestore.instance
-          .collection("stores")
-          .doc(checkedStores[0])
-          .update({
-        'storeName': storeName.text,
-        'storeCode': storeCode.text,
-        'province': province.text,
-        'country': country.text,
-        'postalCode': postalCode.text,
-        'city': city.text,
-        'add1': add1.text,
-        'add2': add2.text,
-      }).then((value) {
-        //DISPLAY SUCCESS MESSAGE with snackbar
-        Get.snackbar("Success", "Store updated successfully",
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.green,
-            colorText: Colors.white);
-      }).catchError((onError) {
-        //DISPLAY ERROR MESSAGE with snackbar
-        Get.snackbar("Error", "Error updating store",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white);
-      });
+    /*if (checkedStores.length == 0) {*/
+    FirebaseFirestore.instance.collection("stores").doc(id).update({
+      'storeName': storeName.text,
+      'storeCode': storeCode.text,
+      'province': province.text,
+      'country': country.text,
+      'postalCode': postalCode.text,
+      'city': city.text,
+      'add1': add1.text,
+      'add2': add2.text,
+    }).then((value) {
+      //DISPLAY SUCCESS MESSAGE with snackbar
+      Get.snackbar("Success", "Store updated successfully",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white);
+    }).catchError((onError) {
+      //DISPLAY ERROR MESSAGE with snackbar
+      Get.snackbar("Error", "Error updating store",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white);
+    });
 
-      Get.back();
-    }
+    Get.back();
+    /*}*/
   }
 
   void addStore(
