@@ -7,9 +7,14 @@ import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
 import 'edit_store.dart';
 
-class StoreList extends StatelessWidget {
-  const StoreList({super.key});
+class StoreList extends StatefulWidget {
+  const StoreList({Key? key}) : super(key: key);
 
+  @override
+  State<StoreList> createState() => _StoreListState();
+}
+
+class _StoreListState extends State<StoreList> {
   @override
   Widget build(BuildContext context) {
     final storeController = Get.put(ViewAddStoreController(), permanent: true);
@@ -157,6 +162,7 @@ class StoreList extends StatelessWidget {
                             onTap: () {
                               if (storeController.checkedStores.length == 1) {
                                 Get.to(() => const EditStore());
+                                setState(() {});
                               } else {
                                 //display erroe message with snackbar with Getx
                                 Get.snackbar(
@@ -205,7 +211,10 @@ class StoreList extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         //storeController.showStoreList.value = false;
-                        Get.to(() => const AddStore());
+                        Get.to(() => const AddStore())?.then((value) {
+                          storeController.update();
+                          return;
+                        });
                       },
                       child: Container(
                         decoration: BoxDecoration(

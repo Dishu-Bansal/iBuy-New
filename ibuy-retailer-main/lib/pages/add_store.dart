@@ -186,12 +186,12 @@ class AddStore extends StatelessWidget {
                         ),
                       ),
                     ),
-                    validator: (value) {
+                    /*validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Store address 2 cannot be empty";
                       }
                       return null;
-                    },
+                    },*/
                   ),
                 ),
                 const SizedBox(

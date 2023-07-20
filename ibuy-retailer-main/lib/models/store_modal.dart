@@ -10,7 +10,8 @@ class StoreModal {
   String? add1;
   String? add2;
   String? id;
-
+  String? createdBy;
+  List<String>? plans;
   StoreModal(
       {this.storeName,
       this.storeCode,
@@ -19,7 +20,9 @@ class StoreModal {
       this.postalCode,
       this.city,
       this.add1,
-      this.add2});
+      this.add2,
+      this.createdBy,
+      this.plans});
 
   StoreModal.fromMap(DocumentSnapshot map) {
     storeName = map['storeName'];
