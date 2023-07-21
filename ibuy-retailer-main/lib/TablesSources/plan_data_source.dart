@@ -35,6 +35,7 @@ class PlanDataSource extends DataTableSource {
               activeColor: kPrimaryColor),
         ),
       ),
+      DataCell(Text(planController.plans[index].planName.toString())),
       DataCell(Text(planController.plans[index].startDate.toString())),
       DataCell(Text(planController.plans[index].enddate.toString())),
       DataCell(Text(planController.plans[index].maxCustomers.toString())),
@@ -42,7 +43,6 @@ class PlanDataSource extends DataTableSource {
       DataCell(Text(planController.plans[index].maxSpend.toString())),
       DataCell(Text(planController.plans[index].minCashback.toString())),
       DataCell(Text(planController.plans[index].maxCashback.toString())),
-      DataCell(Text(planController.plans[index].storeName.toString())),
       DataCell(Obx(
         () => planController.plans[index].status!
             ? const Chip(

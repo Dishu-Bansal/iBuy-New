@@ -1,9 +1,15 @@
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/plan_controller.dart';
+import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
+
+import '../TablesSources/store_data_source.dart';
+
+List<String> selectedStores = List.empty(growable: true);
 
 class AddPlan extends StatelessWidget {
-  const AddPlan({super.key});
+  AddPlan({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -269,38 +275,6 @@ class AddPlan extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                Flexible(
-                  child: TextFormField(
-                    controller: planController.storeNameCon,
-                    cursorColor: Colors.black45,
-                    decoration: InputDecoration(
-                      labelText: "Store Name",
-                      //border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                      labelStyle: const TextStyle(color: Colors.black45),
-
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Field cannot be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
               ],
             ),
             const SizedBox(
@@ -383,6 +357,10 @@ class AddPlan extends StatelessWidget {
               ],
             ),
             const SizedBox(
+              height: 50,
+            ),
+            StoreSelection(),
+            const SizedBox(
               height: 100,
             ),
             Row(
@@ -396,7 +374,7 @@ class AddPlan extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           if (formKey.currentState!.validate()) {
-                            planController.addPlan();
+                            planController.addPlan(selectedStores);
                           } else {
                             //display error message with snackbar
                             Get.snackbar(
@@ -455,6 +433,148 @@ class AddPlan extends StatelessWidget {
           ]),
         ),
       ),
+    );
+  }
+}
+
+class StoreSelection extends StatefulWidget {
+  const StoreSelection({Key? key}) : super(key: key);
+
+  @override
+  State<StoreSelection> createState() => _StoreSelectionState();
+}
+
+class _StoreSelectionState extends State<StoreSelection> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        MaterialButton(
+          onPressed: () async {
+            selectedStores = await showDialog(
+                context: context,
+                builder: (context) {
+                  final storeController =
+                      Get.put(ViewAddStoreController(), permanent: true);
+
+                  final DataTableSource data = StoreDataSource();
+
+                  return Scaffold(
+                    body: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 0),
+                      child: FutureBuilder(
+                        future: storeController.getStores(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return Column(
+                              children: [
+                                Flexible(
+                                  child: Container(
+                                    height: 600,
+                                    color: Colors.white,
+                                    child: PaginatedDataTable2(
+                                      //set the max pages to length of data
+
+                                      rowsPerPage: 10,
+                                      showFirstLastButtons: false,
+                                      headingRowColor:
+                                          MaterialStateColor.resolveWith(
+                                              (states) =>
+                                                  const Color(0xffF8F8F8)
+                                                      .withOpacity(1)),
+                                      columnSpacing: 12,
+
+                                      horizontalMargin: 12,
+                                      // showBottomBorder: true,
+                                      // bottomMargin: 0,
+                                      minWidth: 400,
+                                      onPageChanged: (value) {},
+                                      // decoration: BoxDecoration(
+                                      //   border: Border.all(
+                                      //     color: Colors.grey,
+                                      //     width: 1,
+                                      //   ),
+                                      // ),
+                                      columns: const [
+                                        DataColumn2(
+                                          label: Text(''),
+                                        ),
+                                        DataColumn2(
+                                          label: Text('Store Code'),
+                                          size: ColumnSize.L,
+                                        ),
+                                        DataColumn(
+                                          label: Text('Store Name'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Address 1'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Address 2'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('City'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Province'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Postal Code'),
+                                        ),
+                                        DataColumn(
+                                          label: Text('Country'),
+                                        ),
+                                      ],
+                                      source: data,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 100,
+                                ),
+                                MaterialButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                        context,
+                                        storeController.checkedStores
+                                            .map((e) => e.toString())
+                                            .toList());
+                                  },
+                                  color: const Color(0xff35BF84),
+                                  child: Text(
+                                    "Apply",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  elevation: 0,
+                                )
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  );
+                });
+            setState(() {});
+          },
+          child: Text(
+            "Select Stores",
+            style: TextStyle(color: Colors.white),
+          ),
+          color: const Color(0xff35BF84),
+          elevation: 0,
+        ),
+        SizedBox(
+          width: 15,
+        ),
+        Text(selectedStores.length.toString() + " stores selected"),
+      ],
     );
   }
 }

@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/models/plan_modal.dart';
+import 'package:ibuy_app_retailer_web/models/store_modal.dart';
+import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
 class PlanController extends GetxController {
   final checkedPlans = [];
@@ -22,6 +24,7 @@ class PlanController extends GetxController {
   final maxCashbackCon = TextEditingController();
   final cashBack = TextEditingController();
   final planName = TextEditingController();
+  final selectedStores = List.empty(growable: true);
 
   void prepareEdit() {
     var plan = plans.firstWhere((element) => element.id == checkedPlans[0]);
@@ -35,6 +38,26 @@ class PlanController extends GetxController {
     maxCashbackCon.text = plan.maxCashback.toString();
     cashBack.text = plan.cashback.toString();
     planName.text = plan.planName.toString();
+  }
+
+  Future<void> prepareStoreEdit() async {
+    var plan = plans.firstWhere((element) => element.id == checkedPlans[0]);
+    final storeController = Get.put(ViewAddStoreController(), permanent: true);
+    await storeController.getStores();
+    int index = 0;
+    for (StoreModal store in storeController.stores) {
+      if (plan.selectedStore!.contains(store.id)) {
+        storeController.checked[index] = true;
+      }
+      index++;
+    }
+    index = 0;
+    for (bool checked in storeController.checked) {
+      if (checked) {
+        storeController.checkedStores.add(storeController.stores[index].id);
+      }
+      index++;
+    }
   }
 
   Future getPlans() async {
@@ -56,12 +79,9 @@ class PlanController extends GetxController {
     }
   }
 
-  void addPlan() {
+  void addPlan(List<String> stores) {
     //print("current user: ${FirebaseAuth.instance.currentUser!.uid}");
-    FirebaseFirestore.instance
-        .collection("plans")
-        .doc(DateTime.now().toString())
-        .set({
+    FirebaseFirestore.instance.collection("plans").add({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
       "company": storeNameCon.text,
@@ -76,7 +96,9 @@ class PlanController extends GetxController {
       "plan_id": DateTime.now().toString(),
       "planName": planName.text,
       "status": false,
+      'creationDate': DateTime.now().millisecondsSinceEpoch,
       "usersEnrolled": 0,
+      "storesSelected": stores,
     }).then((value) {
       log("Plan Added");
       Get.back();
@@ -126,7 +148,7 @@ class PlanController extends GetxController {
         snackPosition: SnackPosition.BOTTOM);
   }
 
-  void savePlan() {
+  void savePlan(List<String> stores) {
     FirebaseFirestore.instance.collection("plans").doc(checkedPlans[0]).update({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
@@ -141,6 +163,8 @@ class PlanController extends GetxController {
       "cashback": double.parse(cashBack.text),
       "plan_id": DateTime.now().toString(),
       "planName": planName.text,
+      "LastUpdate": DateTime.now().millisecondsSinceEpoch,
+      "storesSelected": stores,
     }).then((value) {
       log("Plan Updated");
       Get.back();

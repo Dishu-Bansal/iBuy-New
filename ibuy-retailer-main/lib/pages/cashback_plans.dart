@@ -55,6 +55,7 @@ class CashBackPlans extends StatelessWidget {
                         DataColumn2(
                           label: Text(''),
                         ),
+                        DataColumn2(label: Text('Name')),
                         DataColumn2(
                           label: Text('Start Date'),
                         ),
@@ -75,9 +76,6 @@ class CashBackPlans extends StatelessWidget {
                         ),
                         DataColumn(
                           label: Text('Max Cashback'),
-                        ),
-                        DataColumn(
-                          label: Text('Store'),
                         ),
                         DataColumn(
                           label: Text('Status'),
@@ -301,7 +299,7 @@ class CashBackPlans extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         //storeController.showStoreList.value = false;
-                        Get.to(() => const AddPlan());
+                        Get.to(() => AddPlan());
                       },
                       child: Container(
                         decoration: BoxDecoration(
