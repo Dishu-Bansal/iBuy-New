@@ -14,12 +14,16 @@ class RequestAccessFieldsWidget extends StatefulWidget {
       _RequestAccessFieldsWidgetState();
 }
 
-class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
-  bool loading = true;
-  List<String> retailers = List.empty(growable: true);
+List<String> retailers = List.empty(growable: true);
+String selectedRetailer = "";
 
-  @override
-  void initState() {
+class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  late SingleValueDropDownController retailerController;
+  bool loading = true;
+
+  fetchRetailers() async {
     FirebaseFirestore.instance
         .collection("eligible-retailers")
         .get()
@@ -35,15 +39,23 @@ class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
         loading = false;
       });
     });
+  }
+
+  @override
+  void initState() {
+    retailerController = SingleValueDropDownController();
+    fetchRetailers();
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final emailController = TextEditingController();
-    final retailerController = SingleValueDropDownController();
+  void dispose() {
+    retailerController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return loading
         ? Center(
             child: CircularProgressIndicator(),
@@ -88,64 +100,7 @@ class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
                 ),
                 const SizedBox(height: 30),
                 //Display a drop down field with random data
-                DropDownTextField(
-                  // initialValue: "name4",
-                  controller: retailerController,
-                  clearOption: true,
-
-                  textFieldDecoration: InputDecoration(
-                    labelText: "Choose your Retailer",
-                    //border: OutlineInputBorder(),
-                    fillColor: Colors.white,
-                    filled: true,
-                    labelStyle: const TextStyle(color: Colors.black45),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(35.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  clearIconProperty: IconProperty(color: kPrimaryColor),
-
-                  validator: (value) {
-                    if (value == null) {
-                      return "Required field";
-                    } else {
-                      return null;
-                    }
-                  },
-                  dropDownItemCount: 4,
-
-                  dropDownList: retailers.map((e) {
-                    return DropDownValueModel(name: e, value: e);
-                  }).toList(),
-                  /*const [
-              DropDownValueModel(name: 'Retailer 1', value: "Retailer 1"),
-              DropDownValueModel(
-                name: 'Retailer 2',
-                value: "Retailer 2",
-              ),
-              DropDownValueModel(name: 'Retailer 3', value: "Retailer 3"),
-              DropDownValueModel(
-                name: 'Retailer 4',
-                value: "Retailer 4",
-              ),
-              // DropDownValueModel(name: 'name5', value: "value5"),
-              // DropDownValueModel(name: 'name6', value: "value6"),
-              // DropDownValueModel(name: 'name7', value: "value7"),
-              // DropDownValueModel(name: 'name8', value: "value8"),
-            ],*/
-                  onChanged: (val) {},
-                ),
-
+                RetailerSelection(),
                 const SizedBox(height: 50),
                 InkWell(
                   onTap: () {
@@ -154,8 +109,7 @@ class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
                     if (formKey.currentState!.validate()) {
                       Get.to(AccountActivationPage(
                         email: emailController.text,
-                        retailer:
-                            retailerController.dropDownValue!.value.toString(),
+                        retailer: selectedRetailer,
                       ));
                     } else {
                       //display error message with snackbar
@@ -190,5 +144,54 @@ class _RequestAccessFieldsWidgetState extends State<RequestAccessFieldsWidget> {
               ],
             ),
           );
+  }
+}
+
+class RetailerSelection extends StatefulWidget {
+  const RetailerSelection({Key? key}) : super(key: key);
+
+  @override
+  State<RetailerSelection> createState() => _RetailerSelectionState();
+}
+
+class _RetailerSelectionState extends State<RetailerSelection> {
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: "Choose your Retailer",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.black45),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null) {
+          return "Required field";
+        } else {
+          return null;
+        }
+      },
+      items: retailers.map((e) {
+        return DropdownMenuItem(child: Text(e), value: e);
+      }).toList(),
+      onChanged: (val) {
+        setState(() {
+          selectedRetailer = val.toString();
+        });
+      },
+    );
   }
 }

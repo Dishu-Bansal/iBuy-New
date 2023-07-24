@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RetailerModal {
@@ -13,7 +12,7 @@ class RetailerModal {
   String? storeName;
   String? id;
   String? planName;
-  Timestamp? creation;
+  int? creation;
   String? createdBy;
   double? cashback;
   bool? status;
@@ -46,7 +45,7 @@ class RetailerModal {
     minCashback = map['minCashback'];
     maxCashback = map['maxCashback'];
     storeName = map['company'];
-    creation = map['creation'];
+    creation = map['creationDate'];
     createdBy = map['createdBy'];
     status = map['status'];
     cashback = map['cashback'];

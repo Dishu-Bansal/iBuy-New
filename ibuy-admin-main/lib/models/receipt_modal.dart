@@ -4,7 +4,7 @@ class ReceiptModal {
   String? imageUrl;
   String? time;
   String? userId;
-  bool? status;
+  String? status;
   String? id;
   String? retailerName;
   String? trxDate;
