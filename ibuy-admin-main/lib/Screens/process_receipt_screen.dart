@@ -187,14 +187,17 @@ class ProcessReceiptScreen extends StatelessWidget {
               }),
         ),
 
-        Obx(
-          () => receiptController.currReceiptUrl.value == ""
-              ? const Icon(Icons.no_transfer_outlined)
-              : Image.network(
-                  receiptController.currReceiptUrl.value,
-                  height: 400,
-                  width: 800,
-                ),
+        Expanded(
+          child: Obx(
+            () => receiptController.currReceiptUrl.value == ""
+                ? const Icon(Icons.no_transfer_outlined)
+                : Image.network(
+                    receiptController.currReceiptUrl.value,
+                    /*height: 400,
+                width: 800,*/
+                    fit: BoxFit.fill,
+                  ),
+          ),
         ),
         const SizedBox(height: 20),
         //borderd button saying next receipt with white background anf black border and text
