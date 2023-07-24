@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final retailers = [].obs;
+  List<String> retailers = <String>[];
 
-  void setRetailers() {
+  Future<void> setRetailers() async {
     FirebaseFirestore.instance
         .collection("eligible-retailers")
         .doc("VsMhGAy0YjhUeWLDAEpn")
@@ -15,8 +15,10 @@ class LoginController extends GetxController {
         .then((value) {
       //retailers.clear();
       print(value.data()!["retailers"]);
-      retailers.value = value.data()!["retailers"];
-      print(retailers.value);
+      retailers = (value.data()!["retailers"] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList();
+      print(retailers);
     });
   }
 
@@ -37,8 +39,9 @@ class LoginController extends GetxController {
     super.onClose();
   }
 
-  void updateRetailers() {
+  void updateRetailers(String newRetailer) {
     print(retailers);
+    retailers.add(newRetailer);
     FirebaseFirestore.instance
         .collection("eligible-retailers")
         .doc("VsMhGAy0YjhUeWLDAEpn")

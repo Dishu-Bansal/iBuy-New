@@ -198,7 +198,7 @@ class HomePage extends StatelessWidget {
     } else if (sidebarController.selectedIndex == 4) {
       return const CashbackScreen();
     } else {
-      return const AddRetailer();
+      return AddRetailer();
     }
   }
 }

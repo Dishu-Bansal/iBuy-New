@@ -72,7 +72,7 @@ class _InterestListWidgetState extends State<InterestListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(loginController.retailers.value);
+    print(loginController.retailers);
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
