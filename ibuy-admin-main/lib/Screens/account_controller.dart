@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../models/account_modal.dart';
+import '../models/retailer_modal.dart';
 
 class AccountController extends GetxController {
   final checkedAccounts = [];
@@ -22,7 +23,15 @@ class AccountController extends GetxController {
       var snapshot =
           await FirebaseFirestore.instance.collection("retailers").get();
       for (var element in snapshot.docs) {
-        accounts.add(AccountModal.fromMap(element));
+        List<RetailerModal> plans = [];
+        var snapshot2 = await FirebaseFirestore.instance
+            .collection("plans")
+            .where("createdBy", isEqualTo: element.id)
+            .get();
+        for (var element2 in snapshot2.docs) {
+          plans.add(RetailerModal.fromMap(element2));
+        }
+        accounts.add(AccountModal.fromMap(element, plans));
         checked.add(false);
       }
     } catch (e) {
