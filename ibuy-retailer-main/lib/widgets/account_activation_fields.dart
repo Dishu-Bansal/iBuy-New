@@ -146,8 +146,8 @@ class AccountActivationFields extends StatelessWidget {
           InkWell(
             onTap: () {
               if (formKey.currentState!.validate()) {
-                actController.createAndStoreAccount(
-                    email, actController.confirmPasswordController.text);
+                actController.createAndStoreAccount(email,
+                    actController.confirmPasswordController.text, retailer);
               } else {
                 //display error message with snackbar
                 Get.snackbar("Error", "Please fill all the fields",

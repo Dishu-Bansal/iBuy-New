@@ -66,7 +66,7 @@ class AccountsScreen extends StatelessWidget {
                                 label: Text(''),
                               ),
                               DataColumn2(
-                                label: Text('Account ID'),
+                                label: Text('Account Name'),
                                 size: ColumnSize.L,
                               ),
                               DataColumn(
@@ -77,6 +77,12 @@ class AccountsScreen extends StatelessWidget {
                               ),
                               DataColumn(
                                 label: Text('Status'),
+                              ),
+                              DataColumn(
+                                label: Text('Active Plans'),
+                              ),
+                              DataColumn(
+                                label: Text('Created On'),
                               ),
                             ],
                             source: data,

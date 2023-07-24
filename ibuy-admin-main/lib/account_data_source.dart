@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/Screens/account_controller.dart';
+import 'package:intl/intl.dart';
 
 import '../constants.dart';
 
@@ -36,7 +37,9 @@ class AccountsDataSource extends DataTableSource {
               activeColor: kPrimaryColor),
         ),
       ),
-      DataCell(Text(accController.accounts[index].accId.toString())),
+      DataCell(Text(accController.accounts[index].firstName.toString() +
+          " " +
+          accController.accounts[index].lastName.toString())),
       DataCell(Text(accController.accounts[index].email.toString())),
       DataCell(Text(accController.accounts[index].retailerName.toString())),
       DataCell(
@@ -57,6 +60,14 @@ class AccountsDataSource extends DataTableSource {
                 ),
               )),
       ),
+      DataCell(Text(accController.accounts[index].plans!
+          .where((element) => element.status == true)
+          .length
+          .toString())),
+      DataCell(Text(DateFormat("dd/MM/yyyy")
+          .format(DateTime.fromMillisecondsSinceEpoch(
+              accController.accounts[index].creationDate!))
+          .toString())),
     ]);
   }
 

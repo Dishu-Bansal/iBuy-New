@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../authentication/login_page.dart';
 
@@ -11,7 +11,7 @@ class AccountActivationController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  void createAndStoreAccount(String email, String password) {
+  void createAndStoreAccount(String email, String password, String retailer) {
     //authenticate user with firebase auth
     //store user details in firestore
     //navigate to login page
@@ -28,6 +28,9 @@ class AccountActivationController extends GetxController {
         "email": email,
         "password": password,
         "uid": value.user!.uid,
+        "retailer_name": retailer,
+        "status": false,
+        "creationDate": DateTime.now().millisecondsSinceEpoch,
       }).then((value) {
         //navigate to login page
         //display a snackbar with success message
