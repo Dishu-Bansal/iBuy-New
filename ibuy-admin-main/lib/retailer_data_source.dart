@@ -61,7 +61,7 @@ class RetailerDataSource extends DataTableSource {
               )
             : const Chip(
                 label: Text(
-                  "Disabled",
+                  "Not Active",
                   style: TextStyle(color: Colors.white),
                 ),
                 backgroundColor: Color(0xff292D32),
