@@ -97,6 +97,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton:
+          imageFile == null ? _captureControlRowWidget() : SizedBox(),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -162,11 +165,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                                       size: 50,
                                     ),
                                   ))
-                            : _captureControlRowWidget(),
+                            : SizedBox(),
                         imageFile != null
                             ? RawMaterialButton(
                                 onPressed: () {
-                                  save();
+                                  clear();
                                 },
                                 fillColor: goldColor,
                                 shape: const CircleBorder(),
@@ -178,15 +181,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                               )
                             : SizedBox(),
                       ]),
-                  /*Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      children: <Widget>[
-                        _cameraTogglesRowWidget(),
-                        //_thumbnailWidget(),
-                      ],
-                    ),
-                  ),*/
                 ],
               )
             ]),
@@ -245,18 +239,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   Widget _captureControlRowWidget() {
     final CameraController? cameraController = controller;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        FloatingActionButton(
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  !cameraController.value.isRecordingVideo
-              ? onTakePictureButtonPressed
-              : null,
-          backgroundColor: goldColor,
-        ),
-      ],
+    return FloatingActionButton.large(
+      onPressed: cameraController != null &&
+              cameraController.value.isInitialized &&
+              !cameraController.value.isRecordingVideo
+          ? onTakePictureButtonPressed
+          : null,
+      backgroundColor: goldColor,
     );
   }
 

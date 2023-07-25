@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +7,7 @@ class ReceiptController extends GetxController {
   var currReceiptUrl = ''.obs;
   final receiptModals = <ReceiptModal>[].obs;
   var index = 0;
-  var customerId = "Hello".obs;
+  var customerId = "".obs;
 
   //Text editing controllers
 
