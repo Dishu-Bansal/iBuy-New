@@ -78,7 +78,7 @@ class ReceiptCard extends StatelessWidget {
                                   )
                                 : const Chip(
                                     label: Text(
-                                      "Pending",
+                                      "Submitted. Pending Review",
                                       style: TextStyle(color: Colors.white),
                                     ),
                                     backgroundColor: Colors.blue,
@@ -90,7 +90,11 @@ class ReceiptCard extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [Text("$dateDifference days ago")],
+                  children: [
+                    Text(dateDifference == 0
+                        ? "Today"
+                        : "$dateDifference days ago")
+                  ],
                 ),
               ],
             ),
