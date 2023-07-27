@@ -11,7 +11,7 @@ class StoreModal {
   String? add2;
   String? id;
   String? createdBy;
-  List<String>? plans;
+  String? plan;
   StoreModal(
       {this.storeName,
       this.storeCode,
@@ -22,7 +22,7 @@ class StoreModal {
       this.add1,
       this.add2,
       this.createdBy,
-      this.plans});
+      this.plan});
 
   StoreModal.fromMap(DocumentSnapshot map) {
     storeName = map['storeName'];
@@ -33,6 +33,7 @@ class StoreModal {
     city = map['city'];
     add1 = map['add1'];
     add2 = map['add2'];
+    plan = map['plan'];
     id = map.id;
   }
 }

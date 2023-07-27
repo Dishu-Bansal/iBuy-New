@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/plan_controller.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
-import '../TablesSources/store_data_source.dart';
+import '../TablesSources/store_for_plan_data_source.dart';
 
 List<String> selectedStores = List.empty(growable: true);
 
@@ -349,6 +349,9 @@ class AddPlan extends StatelessWidget {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Incorrect input";
+                      } else if (planController.plans
+                          .any((element) => element.planName == value)) {
+                        return "Same name plan already exists";
                       }
                       return null;
                     },
@@ -457,7 +460,7 @@ class _StoreSelectionState extends State<StoreSelection> {
                   final storeController =
                       Get.put(ViewAddStoreController(), permanent: true);
 
-                  final DataTableSource data = StoreDataSource();
+                  final DataTableSource data = StoreForPlanDataSource();
 
                   return Scaffold(
                     body: Padding(

@@ -115,7 +115,7 @@ class ViewAddStoreController extends GetxController {
       'add1': add1,
       'add2': add2,
       'createdBy': FirebaseAuth.instance.currentUser!.uid,
-      'plans': List.empty(),
+      'plan': "",
     }).then((value) {
       //DISPLAY SUCCESS MESSAGE with snackbar
       Get.snackbar("Success", "Store added successfully",

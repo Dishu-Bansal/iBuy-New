@@ -19,7 +19,7 @@ class _StoreListState extends State<StoreList> {
   Widget build(BuildContext context) {
     final storeController = Get.put(ViewAddStoreController(), permanent: true);
 
-    final DataTableSource data = StoreDataSource();
+    final DataTableSource data = StoreDataSource(null);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),

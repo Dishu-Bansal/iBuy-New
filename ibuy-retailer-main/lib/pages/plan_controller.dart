@@ -79,9 +79,9 @@ class PlanController extends GetxController {
     }
   }
 
-  void addPlan(List<String> stores) {
+  Future<void> addPlan(List<String> stores) async {
     //print("current user: ${FirebaseAuth.instance.currentUser!.uid}");
-    FirebaseFirestore.instance.collection("plans").add({
+    await FirebaseFirestore.instance.collection("plans").add({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
       "company": storeNameCon.text,
@@ -99,7 +99,13 @@ class PlanController extends GetxController {
       'creationDate': DateTime.now().millisecondsSinceEpoch,
       "usersEnrolled": 0,
       "storesSelected": stores,
-    }).then((value) {
+    }).then((value) async {
+      for (String store in stores) {
+        await FirebaseFirestore.instance
+            .collection("stores")
+            .doc(store)
+            .update({"plan": value.id});
+      }
       log("Plan Added");
       Get.back();
       getPlans();
@@ -178,7 +184,25 @@ class PlanController extends GetxController {
       "planName": planName.text,
       "LastUpdate": DateTime.now().millisecondsSinceEpoch,
       "storesSelected": stores,
-    }).then((value) {
+    }).then((value) async {
+      await FirebaseFirestore.instance
+          .collection("stores")
+          .where("plan", isEqualTo: checkedPlans[0])
+          .get()
+          .then((value) async {
+        for (DocumentSnapshot current in value.docs) {
+          await FirebaseFirestore.instance
+              .collection("stores")
+              .doc(current.id)
+              .update({"plan": ""});
+        }
+      });
+      for (String store in stores) {
+        await FirebaseFirestore.instance
+            .collection("stores")
+            .doc(store)
+            .update({"plan": checkedPlans[0]});
+      }
       log("Plan Updated");
       Get.back();
       //getPlans();

@@ -467,11 +467,11 @@ class StoreSelection extends StatefulWidget {
 
 class _StoreSelectionState extends State<StoreSelection> {
   bool prepared = false;
+  final planController = Get.find<PlanController>();
 
   @override
   Widget build(BuildContext context) {
     if (!prepared) {
-      final planController = Get.find<PlanController>();
       planController.prepareStoreEdit().then((value) {
         setState(() {
           prepared = true;
@@ -495,7 +495,9 @@ class _StoreSelectionState extends State<StoreSelection> {
 
                         print("Start: " + selectedStores.toString());
 
-                        final DataTableSource data = StoreDataSource();
+                        final DataTableSource data = StoreDataSource(
+                            planController.plans.singleWhere((element) =>
+                                element.id == planController.checkedPlans[0]));
                         /*final planController = Get.find<PlanController>();*/
 
                         return Scaffold(

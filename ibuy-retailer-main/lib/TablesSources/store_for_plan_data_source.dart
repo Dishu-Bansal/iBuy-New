@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibuy_app_retailer_web/models/store_modal.dart';
 
 import '../constants.dart';
 import '../pages/view_add_store_controller.dart';
 
-class StoreDataSource extends DataTableSource {
+class StoreForPlanDataSource extends DataTableSource {
   final storeController = Get.find<ViewAddStoreController>();
 
   @override
@@ -12,28 +13,35 @@ class StoreDataSource extends DataTableSource {
     return DataRow(cells: [
       DataCell(
         Obx(
-          () => Checkbox(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              tristate: false,
-              value: storeController.checked[index],
-              onChanged: (value) {
-                storeController.checked[index] =
-                    !storeController.checked[index];
+          () {
+            StoreModal current = storeController.stores[index];
+            return Checkbox(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                tristate: true,
+                value:
+                    current.plan == "" ? storeController.checked[index] : null,
+                onChanged: current.plan == ""
+                    ? (value) {
+                        if (current.plan == "") {
+                          storeController.checked[index] =
+                              !storeController.checked[index];
 
-                if (storeController.checkedStores
-                    .contains(storeController.stores[index].id.toString())) {
-                  storeController.checkedStores
-                      .remove(storeController.stores[index].id.toString());
-                } else {
-                  storeController.checkedStores
-                      .add(storeController.stores[index].id.toString());
-                }
-
-                //accController.update();
-              },
-              activeColor: kPrimaryColor),
+                          if (storeController.checkedStores.contains(
+                              storeController.stores[index].id.toString())) {
+                            storeController.checkedStores.remove(
+                                storeController.stores[index].id.toString());
+                          } else {
+                            storeController.checkedStores.add(
+                                storeController.stores[index].id.toString());
+                          }
+                        }
+                        //accController.update();
+                      }
+                    : null,
+                activeColor: kPrimaryColor);
+          },
         ),
       ),
       DataCell(Text(storeController.stores[index].storeCode.toString())),
