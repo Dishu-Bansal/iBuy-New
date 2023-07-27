@@ -16,7 +16,7 @@ class ReceiptController extends GetxController {
   TextEditingController totalSpend = TextEditingController();
   TextEditingController last4Digits = TextEditingController();
 
-//call the getReceipt function when the controller is initialized
+  //call the getReceipt function when the controller is initialized
 
   Future getReceiptModals() async {
     receiptModals.clear();
