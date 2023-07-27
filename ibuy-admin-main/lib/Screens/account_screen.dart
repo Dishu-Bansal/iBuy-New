@@ -150,7 +150,7 @@ class AccountsScreen extends StatelessWidget {
                                   width: 10,
                                 ),
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     if (accController.checkedAccounts.isEmpty) {
                                       //display erroe message with snackbar with Getx
                                       Get.snackbar(
@@ -166,7 +166,7 @@ class AccountsScreen extends StatelessWidget {
                                             Curves.fastLinearToSlowEaseIn,
                                       );
                                     } else {
-                                      accController.rejectAccounts();
+                                      await accController.rejectAccounts();
                                     }
                                   },
                                   child: Container(

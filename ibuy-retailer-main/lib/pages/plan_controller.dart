@@ -117,18 +117,31 @@ class PlanController extends GetxController {
     // getPlans();
   }
 
-  void activatePlans() {
+  void activatePlans() async {
     for (var element in checkedPlans) {
-      FirebaseFirestore.instance
-          .collection("plans")
-          .doc(element)
-          .update({"status": true}).then((value) {
-        getPlans();
+      await FirebaseFirestore.instance
+          .collection("retailers")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((value) async {
+        if (value.data()?["status"] == true) {
+          await FirebaseFirestore.instance
+              .collection("plans")
+              .doc(element)
+              .update({"status": true}).then((value) {
+            getPlans();
+          });
+          Get.snackbar(
+              "Plans Activated", "The selected plans have been activated",
+              snackPosition: SnackPosition.BOTTOM);
+        } else {
+          Get.snackbar("Error",
+              "Your Account has been deactivated. Please contact the administrator before making any changes",
+              snackPosition: SnackPosition.BOTTOM);
+        }
       });
     }
     //display snackbar here to show that the plans have been deleted
-    Get.snackbar("Plans Activated", "The selected plans have been activated",
-        snackPosition: SnackPosition.BOTTOM);
 
     // getPlans();
   }

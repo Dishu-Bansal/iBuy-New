@@ -59,13 +59,26 @@ class AccountController extends GetxController {
     //dispalay a snackbar
   }
 
-  void rejectAccounts() {
+  Future<void> rejectAccounts() async {
     isLoading.value = true;
     for (var element in checkedAccounts) {
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection("retailers")
           .doc(element)
           .update({"status": false});
+
+      await FirebaseFirestore.instance
+          .collection("plans")
+          .where("createdBy", isEqualTo: element)
+          .get()
+          .then((value) async {
+        for (DocumentSnapshot plan in value.docs) {
+          await FirebaseFirestore.instance
+              .collection("plans")
+              .doc(plan.id)
+              .update({"status": false});
+        }
+      });
     }
 
     getAccounts().then((value) {
