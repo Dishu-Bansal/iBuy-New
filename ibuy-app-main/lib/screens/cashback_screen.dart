@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/models/myuser.dart';
 
@@ -21,12 +20,13 @@ class _CashBackScreenState extends State<CashBackScreen> {
   int spent = 0;
   double cashback = 0;
   double inProcessCashback = 0;
+  bool loading = true;
 
   double earnedCashback = 0;
-  void getReceipts() {
+  void getReceipts() async {
     spent = 0;
     print(Userr().uid);
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('receipts')
         .where("user_uid", isEqualTo: Userr().uid.toString())
         .where("status", isEqualTo: "approved")
@@ -39,18 +39,18 @@ class _CashBackScreenState extends State<CashBackScreen> {
 
       print("spent: " + spent.toString());
       print("budget: " + Userr.userData.budget.toString());
-    });
 
-    if (spent > Userr.userData.budget) {
-      setState(() {
-        isEligible = true;
-      });
-    }
+      if (spent > Userr.userData.budget) {
+        setState(() {
+          isEligible = true;
+        });
+      }
+    });
   }
 
   //get the total earned cashback till date
-  void getTotalEarnedCashback() {
-    FirebaseFirestore.instance
+  void getTotalEarnedCashback() async {
+    await FirebaseFirestore.instance
         .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
         .get()
@@ -70,34 +70,33 @@ class _CashBackScreenState extends State<CashBackScreen> {
     });
   }
 
-  void requestCashback() {
-    FirebaseFirestore.instance.collection('cashbacks').add({
+  void requestCashback() async {
+    await FirebaseFirestore.instance.collection('cashbacks').add({
       "user_uid": Userr().uid,
-      "amount": cashback / 100 * spent,
+      "amount": cashback / 100 * Userr.userData.budget,
       "paid": false,
       "retailer": retailer,
       "date": DateTime.now().toString()
-    }).then((value) => {
-          //display success message with snackbar
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Cashback requested successfully"),
-            ),
-          )
-        });
-
-    setState(() {
-      getPlanDetails();
-      getReceipts();
-      getTotalEarnedCashback();
-      checkIfAlreadyRequested();
-      checkIfCashbackPaid();
+    }).then((value) {
+      setState(() {
+        getPlanDetails();
+        getReceipts();
+        getTotalEarnedCashback();
+        checkIfAlreadyRequested();
+        checkIfCashbackPaid();
+      });
+      //display success message with snackbar
+      return ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cashback requested successfully"),
+        ),
+      );
     });
   }
 
   //a function that will check if a user has alraedy requested for cashback
-  void checkIfAlreadyRequested() {
-    FirebaseFirestore.instance
+  void checkIfAlreadyRequested() async {
+    await FirebaseFirestore.instance
         .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
         .where("paid", isEqualTo: false)
@@ -113,8 +112,8 @@ class _CashBackScreenState extends State<CashBackScreen> {
   }
 
   //a funtion that will check if the cashback is paid or not
-  void checkIfCashbackPaid() {
-    FirebaseFirestore.instance
+  void checkIfCashbackPaid() async {
+    await FirebaseFirestore.instance
         .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
         .where("paid", isEqualTo: true)
@@ -126,12 +125,15 @@ class _CashBackScreenState extends State<CashBackScreen> {
           casbackPaid = true;
         });
       }
+      setState(() {
+        loading = false;
+      });
     });
   }
 
-  void getPlanDetails() {
+  void getPlanDetails() async {
     cashback = 0;
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('plans')
         .doc(Userr().planId.toString())
         .get()
@@ -176,270 +178,283 @@ class _CashBackScreenState extends State<CashBackScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-                child: Text(
-                  "Cashback Summary",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 10,
-                      offset: const Offset(0, 1), // changes position of shadow
+          child: loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+                      child: Text(
+                        "Cashback Summary",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ],
-                ),
-                width: MediaQuery.of(context).size.width,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Earned Cashback till date",
-                              style: TextStyle(color: Color(0xff999999)),
-                            ),
-                            Text(
-                              "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
-                              style: const TextStyle(
-                                color: Color(0xff3DBB85),
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Redeemed Cashback",
-                              style: TextStyle(color: Color(0xff999999)),
-                            ),
-                            Text(
-                              "\$$redemedCashback",
-                              style: const TextStyle(color: Color(0xff292D32)),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "In Process",
-                              style: TextStyle(color: Color(0xff999999)),
-                            ),
-                            Text(
-                              !casbackPaid
-                                  ? "\$${inProcessCashback.toStringAsFixed(2)}"
-                                  : "\$0",
-                              style: const TextStyle(color: Color(0xff292D32)),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Redeemable Cashback",
-                              style: TextStyle(color: Color(0xff999999)),
-                            ),
-                            Text(
-                              !casbackPaid
-                                  ? "\$$redemableCashback"
-                                  : "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
-                              style: const TextStyle(color: Color(0xff292D32)),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: spent >= Userr.userData.budget
-                      ? !alreadyApplied
-                          ? const Text(
-                              "Congratulations!",
-                              style: TextStyle(
-                                color: Color(0xff3DBB85),
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : Text(
-                              !casbackPaid
-                                  ? "Cashback already requested!"
-                                  : "Cashback Approved!",
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 29, 30, 30),
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                      : const Text(
-                          "No Cashback Yet!",
-                          style: TextStyle(
-                            color: Color(0xffFF6359),
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 10,
+                            offset: const Offset(
+                                0, 1), // changes position of shadow
                           ),
+                        ],
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Earned Cashback till date",
+                                    style: TextStyle(color: Color(0xff999999)),
+                                  ),
+                                  Text(
+                                    "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      color: Color(0xff3DBB85),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Redeemed Cashback",
+                                    style: TextStyle(color: Color(0xff999999)),
+                                  ),
+                                  Text(
+                                    "\$$redemedCashback",
+                                    style: const TextStyle(
+                                        color: Color(0xff292D32)),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "In Process",
+                                    style: TextStyle(color: Color(0xff999999)),
+                                  ),
+                                  Text(
+                                    !casbackPaid
+                                        ? "\$${inProcessCashback.toStringAsFixed(2)}"
+                                        : "\$0",
+                                    style: const TextStyle(
+                                        color: Color(0xff292D32)),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Redeemable Cashback",
+                                    style: TextStyle(color: Color(0xff999999)),
+                                  ),
+                                  Text(
+                                    !casbackPaid
+                                        ? "\$$redemableCashback"
+                                        : "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                        color: Color(0xff292D32)),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                ),
-              ),
-              spent >= Userr.userData.budget
-                  ? !casbackPaid
-                      ? Text(
-                          !alreadyApplied
-                              ? "You are eligible for a free delivery of your cashback check!"
-                              : "Please wait while we process your cashback request. You will be notified once your cashback is ready to be redeemed.",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontStyle: FontStyle.italic,
-                            color: Color(0xff000000),
-                          ),
-                        )
-                      : const Center(
-                          child: Text(
-                            "Your cashback has been approved.",
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Center(
+                        child: spent >= Userr.userData.budget
+                            ? !alreadyApplied
+                                ? const Text(
+                                    "Congratulations!",
+                                    style: TextStyle(
+                                      color: Color(0xff3DBB85),
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : Text(
+                                    !casbackPaid
+                                        ? "Cashback already requested!"
+                                        : "Cashback Approved!",
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 29, 30, 30),
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                            : const Text(
+                                "No Cashback Yet!",
+                                style: TextStyle(
+                                  color: Color(0xffFF6359),
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                    spent >= Userr.userData.budget
+                        ? !casbackPaid
+                            ? Text(
+                                !alreadyApplied
+                                    ? "You are eligible for a free delivery of your cashback check!"
+                                    : "Please wait while we process your cashback request. You will be notified once your cashback is ready to be redeemed.",
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Color(0xff000000),
+                                ),
+                              )
+                            : const Center(
+                                child: Text(
+                                  "Your cashback has been approved.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Color(0xff000000),
+                                  ),
+                                ),
+                              )
+                        : const Text(
+                            "You will be eligible for cashback as soon as you have ${10} or more as Redeemable cashback. Keep at it!",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               color: Color(0xff000000),
                             ),
                           ),
-                        )
-                  : const Text(
-                      "You will be eligible for cashback as soon as you have ${10} or more as Redeemable cashback. Keep at it!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        color: Color(0xff000000),
-                      ),
-                    ),
-              spent >= Userr.userData.budget
-                  ? !alreadyApplied && !casbackPaid
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 50),
-                          child: GestureDetector(
-                            onTap: () {
-                              requestCashback();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xffFEC107),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              height: 50,
-                              child: const Center(
-                                child: Text(
-                                  "REQUEST CASHBACK!",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 16,
-                                      color: Colors.black),
+                    spent >= Userr.userData.budget
+                        ? !alreadyApplied && !casbackPaid
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 50),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    requestCashback();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xffFEC107),
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    height: 50,
+                                    child: const Center(
+                                      child: Text(
+                                        "REQUEST CASHBACK!",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 16,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : const SizedBox()
-                  : const SizedBox(),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Hot Tips!!",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.circle,
-                          color: Color(0xffFF6359),
-                          size: 10,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Invite others and get cashback!")
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.circle,
-                          color: Color(0xffFF6359),
-                          size: 10,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
+                              )
+                            : const SizedBox()
+                        : const SizedBox(),
+                    const Expanded(child: SizedBox()),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                            "Don't miss anything, scan everything at \nfood basics.")
+                          "Hot Tips!!",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: Color(0xffFF6359),
+                                size: 10,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text("Invite others and get cashback!")
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: Color(0xffFF6359),
+                                size: 10,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                  "Don't miss anything, scan everything at \nfood basics.")
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: Color(0xffFF6359),
+                                size: 10,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text("Check additional tips to save even more!")
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.circle,
-                          color: Color(0xffFF6359),
-                          size: 10,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text("Check additional tips to save even more!")
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                  ],
+                ),
         )
         // : const Center(
         //     child: Text("You're not eligible for the Cashback."),
