@@ -20,16 +20,17 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   int spent = 0;
   String company = "";
   var budget = 1.0;
+  bool planCompleted = false;
 
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
 
-  var isLoading = false;
-  void getReceipts() {
+  var isLoading = true;
+  void getReceipts() async {
     spent = 0;
     try {
       print("User UID in plan status screen: " + Userr().uid.toString());
       print("Firebase UId: " + FirebaseAuth.instance.currentUser!.uid);
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('receipts')
           .where("user_uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .where("status", isEqualTo: "approved")
@@ -40,17 +41,19 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
         }
 
         print("spent: " + spent.toString());
-      });
-      setState(() {
-        isLoading = false;
+
+        setState(() {
+          isLoading = false;
+          planCompleted = spent / Userr.userData.budget >= 1 ? true : false;
+        });
       });
     } catch (e) {
       print(e);
     }
   }
 
-  void getPlansList() {
-    FirebaseFirestore.instance.collection('plans').get().then((value) {
+  void getPlansList() async {
+    await FirebaseFirestore.instance.collection('plans').get().then((value) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
       if (dat.isNotEmpty) {
         setState(() {
@@ -64,24 +67,20 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
 
   @override
   void initState() {
-    setState(() {
-      isLoading = true;
-    });
     budget = Userr.userData.budget;
     Utils().getDataFromDB(FirebaseAuth.instance.currentUser!.uid);
     print("User plan ID:" + Userr.userData.planId);
     getPlansList();
     getReceipts();
-    setState(() {});
 
     super.initState();
   }
 
-  void getPlanWithId() {
+  void getPlanWithId() async {
     // print("in plan with id");
 
     String idd = Userr.userData.planId;
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('User')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
@@ -106,8 +105,6 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool planCompleted = spent / Userr.userData.budget >= 1 ? true : false;
-
     return Scaffold(
       drawer: const DrawerWidget(),
       onDrawerChanged: (isOpened) {
@@ -293,8 +290,9 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                     children: [
                                       CircleProgressBar(
                                         strokeWidth: 10,
-                                        foregroundColor:
-                                            const Color(0xff9D87FF),
+                                        foregroundColor: planCompleted
+                                            ? Color(0xff3DBB85)
+                                            : Color(0xff9D87FF),
                                         backgroundColor:
                                             const Color(0xffE8E8E8),
                                         value: 1,
@@ -324,9 +322,9 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
-                                          children: const [
+                                          children: [
                                             Text(
-                                              "30",
+                                              planCompleted ? "" : "30",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18),
@@ -335,7 +333,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                               width: 5,
                                             ),
                                             Text(
-                                              "days",
+                                              planCompleted ? "" : "days",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.normal,
                                                   fontSize: 18),
