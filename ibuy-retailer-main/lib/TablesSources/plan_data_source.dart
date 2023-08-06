@@ -44,21 +44,15 @@ class PlanDataSource extends DataTableSource {
       DataCell(Text(planController.plans[index].minCashback.toString())),
       DataCell(Text(planController.plans[index].maxCashback.toString())),
       DataCell(Obx(
-        () => planController.plans[index].status!
-            ? const Chip(
-                label: Text(
-                  "Active",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Color(0xff3DBB85),
-              )
-            : const Chip(
-                label: Text(
-                  "Disabled",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Color(0xff292D32),
-              ),
+        () => Chip(
+          label: Text(
+            planController.plans[index].status!,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: planController.plans[index].status! == "Active"
+              ? Color(0xff3DBB85)
+              : const Color(0xff292D32),
+        ),
       )),
     ]);
   }

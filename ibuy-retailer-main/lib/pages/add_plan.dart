@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/plan_controller.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
+import 'package:intl/intl.dart';
 
 import '../TablesSources/store_for_plan_data_source.dart';
 
 List<String> selectedStores = List.empty(growable: true);
 
 class AddPlan extends StatelessWidget {
-  AddPlan({super.key});
+  DateTime? startdate = null;
+  DateTime? enddate = null;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,17 @@ class AddPlan extends StatelessWidget {
                         ),
                       ),
                     ),
+                    onTap: () async {
+                      DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(Duration(days: 90)),
+                      );
+                      startdate = date;
+                      planController.startDateCon.text =
+                          DateFormat('dd/MM/yyyy').format(date!).toString();
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Field cannot be empty";
@@ -83,9 +96,25 @@ class AddPlan extends StatelessWidget {
                         ),
                       ),
                     ),
+                    onTap: () async {
+                      DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: startdate ?? DateTime.now(),
+                        firstDate: startdate ?? DateTime.now(),
+                        lastDate: startdate == null
+                            ? DateTime.now().add(Duration(days: 90))
+                            : startdate!.add(Duration(days: 90)),
+                      );
+                      enddate = date;
+                      planController.endDateCon.text =
+                          DateFormat('dd/MM/yyyy').format(date!).toString();
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Field cannot be empty";
+                      } else if (enddate!.difference(startdate!).inDays > 90 ||
+                          enddate!.difference(startdate!).inDays <= 0) {
+                        return "It must be within 90 days of start date";
                       }
                       return null;
                     },
@@ -121,6 +150,8 @@ class AddPlan extends StatelessWidget {
                     validator: (value) {
                       if (value == null || value.isEmpty || !value.isNum) {
                         return "Field name cannot be empty";
+                      } else if (int.parse(value) <= 0) {
+                        return "Max Customers must have at least 1 value";
                       }
                       return null;
                     },

@@ -47,6 +47,7 @@ dependencies:
   data_table_2: ^2.3.10
   dropdown_textfield: ^1.0.7
   firebase_auth:
+  syncfusion_flutter_datepicker:
 
 dev_dependencies:
   flutter_test:

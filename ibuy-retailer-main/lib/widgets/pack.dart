@@ -8,7 +8,7 @@ class Pack extends StatelessWidget {
   final String name;
   final Timestamp dateCreated;
   final double cashback;
-  final bool isActive;
+  final String isActive;
   final int users;
 
   const Pack(
@@ -56,39 +56,24 @@ class Pack extends StatelessWidget {
                         style: _headingStyle(),
                       ),
                       const SizedBox(width: 10),
-                      isActive
-                          ? Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xff3DBB85),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Active",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xff292D32),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "Disabled",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isActive == "Active"
+                              ? const Color(0xff3DBB85)
+                              : const Color(0xff292D32),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            isActive,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
                             ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   Column(

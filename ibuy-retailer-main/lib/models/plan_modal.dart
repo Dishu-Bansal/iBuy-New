@@ -15,7 +15,7 @@ class PlanModal {
   Timestamp? creation;
   String? createdBy;
   double? cashback;
-  bool? status;
+  String? status;
   List<String>? selectedStore;
   int? creationDate;
   int? LastUpdate;

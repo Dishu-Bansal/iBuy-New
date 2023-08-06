@@ -95,7 +95,7 @@ class PlanController extends GetxController {
       "cashback": double.parse(cashBack.text),
       "plan_id": DateTime.now().toString(),
       "planName": planName.text,
-      "status": false,
+      "status": "Disabled",
       'creationDate': DateTime.now().millisecondsSinceEpoch,
       "usersEnrolled": 0,
       "storesSelected": stores,
@@ -130,15 +130,30 @@ class PlanController extends GetxController {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get()
           .then((value) async {
-        if (value.data()?["status"] == true) {
+        if (value.data()?["status"] == "Disabled") {
           await FirebaseFirestore.instance
               .collection("plans")
               .doc(element)
-              .update({"status": true}).then((value) {
+              .update({"status": "Active"}).then((value) {
             getPlans();
           });
           Get.snackbar(
               "Plans Activated", "The selected plans have been activated",
+              snackPosition: SnackPosition.BOTTOM);
+        } else if (value.data()?["status"] == "At Capacity") {
+          if (value.data()?['usersEnrolled'] < value.data()?['maxCustomers']) {
+            await FirebaseFirestore.instance
+                .collection("plans")
+                .doc(element)
+                .update({"status": "Active"}).then((value) {
+              getPlans();
+            });
+            Get.snackbar(
+                "Plans Activated", "The selected plans have been activated",
+                snackPosition: SnackPosition.BOTTOM);
+          }
+          Get.snackbar(
+              "Error", "PLan At Capacity. Please update Max Customers first.",
               snackPosition: SnackPosition.BOTTOM);
         } else {
           Get.snackbar("Error",
@@ -157,7 +172,7 @@ class PlanController extends GetxController {
       FirebaseFirestore.instance
           .collection("plans")
           .doc(element)
-          .update({"status": false}).then((value) {
+          .update({"status": "Disabled"}).then((value) {
         getPlans();
       });
     }

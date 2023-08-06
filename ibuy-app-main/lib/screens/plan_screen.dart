@@ -59,7 +59,7 @@ class _PlanScreenState extends State<PlanScreen> {
     });
     await FirebaseFirestore.instance
         .collection('plans')
-        .where("status", isEqualTo: true)
+        .where("status", isEqualTo: "Active")
         .get()
         .then((value) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
@@ -232,6 +232,16 @@ class _PlanScreenState extends State<PlanScreen> {
             .get()
             .then((value) {
           int enrolledCount = value['usersEnrolled'];
+          if (enrolledCount + 1 == value['maxCustomers']) {
+            FirebaseFirestore.instance
+                .collection("plans")
+                .doc(id)
+                .update({"status": "At Capacity"}).then((value) {
+              debugPrint("updated");
+            }).catchError((onError) {
+              debugPrint(onError.toString());
+            });
+          }
           FirebaseFirestore.instance
               .collection("plans")
               .doc(id)
