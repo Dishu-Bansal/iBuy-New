@@ -1,10 +1,26 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+
+import '../locate.dart';
 import '../widgets/plan_card.dart';
+
+class MyStore {
+  String name = "";
+  double lat = 0;
+  double long = 0;
+  QueryDocumentSnapshot<Map<String, dynamic>>? plan = null;
+
+  MyStore(this.name, this.lat, this.long, this.plan);
+}
 
 class PlanScreen extends StatefulWidget {
   const PlanScreen({super.key});
@@ -16,24 +32,74 @@ class PlanScreen extends StatefulWidget {
 class _PlanScreenState extends State<PlanScreen> {
   final f = DateFormat("dd MMMM, yyyy");
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
+  List<MyStore> storesList = [];
+  Completer<GoogleMapController> _controller = Completer();
   var isLoading = false;
+  Locate locate = Locate();
+  Position? data = null;
 
   //a function that will return retailer name from the retailer id
 
-  void getPlansList() {
+  locateit() async {
+    Position dat = await locate.determinePosition();
+    setState(() {
+      data = dat;
+    });
+  }
+
+  /*changePosition(MyStore store) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(store.latitude, store.longitude), zoom: 16.0)));
+  }*/
+
+  void getPlansList() async {
     setState(() {
       isLoading = true;
     });
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('plans')
         .where("status", isEqualTo: true)
         .get()
         .then((value) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
       if (dat.isNotEmpty) {
-        setState(() {
-          plansList = dat;
-        });
+        /*setState(() {*/
+        plansList = dat;
+        /*});*/
+      }
+    });
+    await FirebaseFirestore.instance
+        .collection('stores')
+        .get()
+        .then((value) async {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
+      if (dat.isNotEmpty) {
+        /*setState(() {*/
+        for (QueryDocumentSnapshot store in dat) {
+          if (store['plan'] != '') {
+            if (plansList.any((element) => element.id == store['plan'])) {
+              List<Location> coord = await locationFromAddress(store['add1'] +
+                  ", " +
+                  store['add2'] +
+                  ", " +
+                  store['city'] +
+                  ", " +
+                  store['province'] +
+                  ", " +
+                  store['country'] +
+                  " " +
+                  store['postalCode']);
+              storesList.add(MyStore(
+                  store['storeName'],
+                  coord.first.latitude,
+                  coord.first.longitude,
+                  plansList
+                      .firstWhere((element) => element.id == store['plan'])));
+            }
+          }
+        }
+        /*});*/
       }
     });
     setState(() {
@@ -43,6 +109,7 @@ class _PlanScreenState extends State<PlanScreen> {
 
   @override
   void initState() {
+    locateit();
     getPlansList();
     super.initState();
   }
@@ -80,24 +147,58 @@ class _PlanScreenState extends State<PlanScreen> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                   ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                          target: LatLng(data!.latitude, data!.longitude),
+                          zoom: 10),
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                      },
+                      markers: List.generate(storesList.length, (index) {
+                        MyStore store = storesList.elementAt(index);
+                        return Marker(
+                            markerId: MarkerId(store.name),
+                            position: LatLng(store.lat, store.long));
+                      }).toSet(),
+                    ),
+                  ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: plansList.length,
+                      itemCount: storesList.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.all(12),
                           child: GestureDetector(
                             onTap: () {
-                              _savePlan(plansList[index].id.toString());
+                              _savePlan(storesList
+                                  .elementAt(index)
+                                  .plan!
+                                  .id
+                                  .toString());
                             },
                             child: PlanCard(
-                              company: plansList[index]['company'].toString(),
-                              cashback: plansList[index]['cashback'].toString(),
-                              requiredSpend:
-                                  plansList[index]['required_spend'].toString(),
-                              endDate: (plansList[index]['endDate']).toString(),
-                              retailerId:
-                                  plansList[index]['createdBy'].toString(),
+                              company: storesList
+                                  .elementAt(index)
+                                  .plan!['company']
+                                  .toString(),
+                              cashback: storesList
+                                  .elementAt(index)
+                                  .plan!['cashback']
+                                  .toString(),
+                              requiredSpend: storesList
+                                  .elementAt(index)
+                                  .plan!['required_spend']
+                                  .toString(),
+                              endDate:
+                                  (storesList.elementAt(index).plan!['endDate'])
+                                      .toString(),
+                              retailerId: storesList
+                                  .elementAt(index)
+                                  .plan!['createdBy']
+                                  .toString(),
                             ),
                           ),
                         );
