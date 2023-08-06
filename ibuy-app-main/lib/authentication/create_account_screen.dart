@@ -46,13 +46,26 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           .signInWithEmailAndPassword(
               email: emailController.text.toString().trim(),
               password: passwordController.text.toString().trim())
-          .then((value) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PlanStatusScreen(),
-          ),
-        );
+          .then((value) async {
+        if (value.user!.emailVerified) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PlanStatusScreen(),
+            ),
+          );
+        } else {
+          value.user!.sendEmailVerification();
+          await FirebaseAuth.instance.signOut();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                "Email NOT Verified. Email has been resent. PLease verify first",
+              ),
+              backgroundColor: Theme.of(context).errorColor,
+            ),
+          );
+        }
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
