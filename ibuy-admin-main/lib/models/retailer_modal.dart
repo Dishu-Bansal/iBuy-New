@@ -15,7 +15,7 @@ class RetailerModal {
   int? creation;
   String? createdBy;
   double? cashback;
-  bool? status;
+  String? status;
   int? count;
 
   RetailerModal(
