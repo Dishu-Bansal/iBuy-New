@@ -36,8 +36,8 @@ class RetailerDataSource extends DataTableSource {
       //   ),
       // ),
       DataCell(Text(retailerController.retailers[index].count.toString())),
-      DataCell(Text(retailerController.retailers[index].id.toString())),
-      DataCell(Text(retailerController.retailers[index].createdBy.toString())),
+      DataCell(Text(retailerController.retailers[index].planName.toString())),
+      DataCell(Text(retailerController.retailers[index].storeName.toString())),
       DataCell(Text(retailerController.retailers[index].startDate!)),
       DataCell(Text(retailerController.retailers[index].enddate.toString())),
       DataCell(
@@ -51,21 +51,16 @@ class RetailerDataSource extends DataTableSource {
           "\$${retailerController.retailers[index].maxCashback.toString()}")),
       //DataCell(Text(retailerController.retailers[index].storeName.toString())),
       DataCell(Obx(
-        () => retailerController.retailers[index].status!
-            ? const Chip(
-                label: Text(
-                  "Active",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Color(0xff3DBB85),
-              )
-            : const Chip(
-                label: Text(
-                  "Not Active",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Color(0xff292D32),
-              ),
+        () => Chip(
+          label: Text(
+            retailerController.retailers[index].status!,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor:
+              retailerController.retailers[index].status! == "Active"
+                  ? Color(0xff3DBB85)
+                  : Color(0xff292D32),
+        ),
       )),
     ]);
   }
