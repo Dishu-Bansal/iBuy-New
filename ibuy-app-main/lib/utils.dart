@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/screens/grocery_budget_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
-
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -134,6 +133,8 @@ class Utils {
     Userr.userData.budget = dat["budget"];
     Userr.userData.createdAt = dat["createdAt"];
     Userr.userData.planId = dat["plan_id"];
+    Userr.userData.end = dat["endDate"];
+    Userr.userData.start = dat["startDate"];
   }
 
   void getDataFromDB(String uid) {

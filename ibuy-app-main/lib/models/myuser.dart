@@ -15,4 +15,6 @@ class Userr {
   String? createdAt = "";
   String planId = "";
   List cards = [];
+  String? end = "";
+  String? start = "";
 }

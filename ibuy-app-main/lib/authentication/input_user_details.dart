@@ -223,6 +223,8 @@ class _InputUserDetailsState extends State<InputUserDetails> {
       "postalCode": 0,
       "plan_id": "",
       "cards": [],
+      "endDate": "",
+      "startDate": "",
     };
     await FirebaseFirestore.instance
         .collection("User")

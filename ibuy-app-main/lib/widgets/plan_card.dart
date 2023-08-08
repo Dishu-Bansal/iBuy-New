@@ -7,13 +7,15 @@ class PlanCard extends StatefulWidget {
   final String requiredSpend;
   final String endDate;
   final String retailerId;
-  const PlanCard(
+  Widget button;
+  PlanCard(
       {super.key,
       required this.company,
       required this.cashback,
       required this.requiredSpend,
       required this.endDate,
-      required this.retailerId});
+      required this.retailerId,
+      required this.button});
 
   @override
   State<PlanCard> createState() => _PlanCardState();
@@ -43,7 +45,6 @@ class _PlanCardState extends State<PlanCard> {
     // print("retailerName" + retailerName);
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 350,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -58,14 +59,6 @@ class _PlanCardState extends State<PlanCard> {
       ),
       child: Column(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 150,
-            decoration: BoxDecoration(
-              color: const Color(0xff292D32),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: Row(
@@ -81,9 +74,9 @@ class _PlanCardState extends State<PlanCard> {
                 Chip(
                   label: Text(
                     "${widget.cashback}% Cashback",
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.black),
                   ),
-                  backgroundColor: Colors.green,
+                  backgroundColor: Color(0xffFEC107),
                 ),
               ],
             ),
@@ -92,54 +85,37 @@ class _PlanCardState extends State<PlanCard> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                const Text(
-                  "Required Spend",
-                  style: TextStyle(color: Color(0xff999999)),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  "\$ ${widget.requiredSpend}",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Color(0xff999999)),
+                    children: [
+                      TextSpan(text: "Spend "),
+                      TextSpan(
+                        text: "\$${widget.requiredSpend}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 18,
+                        ),
+                      ),
+                      TextSpan(text: " before "),
+                      TextSpan(
+                          text: widget.endDate,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 18,
+                          ))
+                    ],
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: widget.button,
+                )
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              child: LinearProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xffFEC107)),
-                minHeight: 8,
-                value: 1,
-                color: Color(0xffFEC107),
-                backgroundColor: Color(0xffE8E8E8),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Plan end Date: ",
-                  style: TextStyle(color: Color(0xff999999)),
-                ),
-                Text(
-                  widget.endDate,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );

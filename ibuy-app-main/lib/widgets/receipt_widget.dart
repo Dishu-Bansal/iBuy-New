@@ -3,12 +3,12 @@ import 'package:freelance_ibuy_app/screens/plan_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 
 import '../camera_example.dart';
-import '../camera_test.dart';
-import '../screens/receipt_upload_screen.dart';
 
 class ReceiptWidget extends StatefulWidget {
   final bool isPlanCompleted;
-  const ReceiptWidget({super.key, required this.isPlanCompleted});
+  final bool anyPlan;
+  const ReceiptWidget(
+      {super.key, required this.isPlanCompleted, required this.anyPlan});
 
   @override
   State<ReceiptWidget> createState() => _ReceiptWidgetState();
@@ -20,7 +20,7 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        widget.isPlanCompleted
+        widget.isPlanCompleted || widget.anyPlan
             ? const SizedBox()
             : Padding(
                 padding: const EdgeInsets.only(bottom: 20),
@@ -50,7 +50,7 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 child: Center(
-                  child: widget.isPlanCompleted
+                  child: widget.isPlanCompleted || widget.anyPlan
                       ? const Text("Create a new Plan",
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 14))
@@ -64,7 +64,7 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
             ),
           ),
         ),
-        widget.isPlanCompleted
+        widget.isPlanCompleted || widget.anyPlan
             ? const SizedBox()
             : Center(
                 child: GestureDetector(
@@ -76,7 +76,7 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
                   ),
                 ),
               ),
-        widget.isPlanCompleted
+        widget.isPlanCompleted || widget.anyPlan
             ? const SizedBox()
             : Padding(
                 padding: const EdgeInsets.only(left: 0, right: 0, bottom: 0),

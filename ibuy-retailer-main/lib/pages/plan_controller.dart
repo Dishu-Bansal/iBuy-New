@@ -130,18 +130,9 @@ class PlanController extends GetxController {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .get()
           .then((value) async {
-        if (value.data()?["status"] == "Disabled") {
-          await FirebaseFirestore.instance
-              .collection("plans")
-              .doc(element)
-              .update({"status": "Active"}).then((value) {
-            getPlans();
-          });
-          Get.snackbar(
-              "Plans Activated", "The selected plans have been activated",
-              snackPosition: SnackPosition.BOTTOM);
-        } else if (value.data()?["status"] == "At Capacity") {
-          if (value.data()?['usersEnrolled'] < value.data()?['maxCustomers']) {
+        if (value.data()?["status"]) {
+          PlanModal current = plans.firstWhere((ele) => ele.id == element);
+          if (current.status == "Disabled") {
             await FirebaseFirestore.instance
                 .collection("plans")
                 .doc(element)
@@ -151,10 +142,23 @@ class PlanController extends GetxController {
             Get.snackbar(
                 "Plans Activated", "The selected plans have been activated",
                 snackPosition: SnackPosition.BOTTOM);
+          } else if (value.data()?["status"] == "At Capacity") {
+            if (value.data()?['usersEnrolled'] <
+                value.data()?['maxCustomers']) {
+              await FirebaseFirestore.instance
+                  .collection("plans")
+                  .doc(element)
+                  .update({"status": "Active"}).then((value) {
+                getPlans();
+              });
+              Get.snackbar(
+                  "Plans Activated", "The selected plans have been activated",
+                  snackPosition: SnackPosition.BOTTOM);
+            }
+            Get.snackbar(
+                "Error", "Plan At Capacity. Please update Max Customers first.",
+                snackPosition: SnackPosition.BOTTOM);
           }
-          Get.snackbar(
-              "Error", "PLan At Capacity. Please update Max Customers first.",
-              snackPosition: SnackPosition.BOTTOM);
         } else {
           Get.snackbar("Error",
               "Your Account has been deactivated. Please contact the administrator before making any changes",

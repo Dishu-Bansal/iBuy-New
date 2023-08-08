@@ -42,21 +42,20 @@ class _PlanScreenState extends State<PlanScreen> {
 
   locateit() async {
     Position dat = await locate.determinePosition();
-    setState(() {
-      data = dat;
-    });
+    return dat;
   }
 
-  /*changePosition(MyStore store) async {
+  changePosition(MyStore store) async {
     final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(store.latitude, store.longitude), zoom: 16.0)));
-  }*/
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(store.lat, store.long), zoom: 16.0)));
+  }
 
   void getPlansList() async {
     setState(() {
       isLoading = true;
     });
+    data = await locateit();
     await FirebaseFirestore.instance
         .collection('plans')
         .where("status", isEqualTo: "Active")
@@ -75,6 +74,7 @@ class _PlanScreenState extends State<PlanScreen> {
         .then((value) async {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
       if (dat.isNotEmpty) {
+        storesList.clear();
         /*setState(() {*/
         for (QueryDocumentSnapshot store in dat) {
           if (store['plan'] != '') {
@@ -109,7 +109,6 @@ class _PlanScreenState extends State<PlanScreen> {
 
   @override
   void initState() {
-    locateit();
     getPlansList();
     super.initState();
   }
@@ -132,86 +131,103 @@ class _PlanScreenState extends State<PlanScreen> {
                 color: Color(0xffFEC107),
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
-              child:
-                  //loop through plansList and return PlanCard
-                  Column(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Select a plan that suits you best!",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
+          : data == null
+              ? Center(
+                  child: Text(
+                    "Please provide Location permission to continue. Either Restart the app or Use settings app",
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
-                    child: GoogleMap(
-                      mapType: MapType.normal,
-                      initialCameraPosition: CameraPosition(
-                          target: LatLng(data!.latitude, data!.longitude),
-                          zoom: 10),
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller.complete(controller);
-                      },
-                      markers: List.generate(storesList.length, (index) {
-                        MyStore store = storesList.elementAt(index);
-                        return Marker(
-                            markerId: MarkerId(store.name),
-                            position: LatLng(store.lat, store.long));
-                      }).toSet(),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: storesList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: GestureDetector(
-                            onTap: () {
-                              _savePlan(storesList
-                                  .elementAt(index)
-                                  .plan!
-                                  .id
-                                  .toString());
-                            },
-                            child: PlanCard(
-                              company: storesList
-                                  .elementAt(index)
-                                  .plan!['company']
-                                  .toString(),
-                              cashback: storesList
-                                  .elementAt(index)
-                                  .plan!['cashback']
-                                  .toString(),
-                              requiredSpend: storesList
-                                  .elementAt(index)
-                                  .plan!['required_spend']
-                                  .toString(),
-                              endDate:
-                                  (storesList.elementAt(index).plan!['endDate'])
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(left: 0, right: 0, top: 10),
+                  child:
+                      //loop through plansList and return PlanCard
+                      Column(
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Select a plan that suits you best!",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          initialCameraPosition: CameraPosition(
+                              target: LatLng(data!.latitude, data!.longitude),
+                              zoom: 10),
+                          onMapCreated: (GoogleMapController controller) {
+                            _controller.complete(controller);
+                          },
+                          markers: List.generate(storesList.length, (index) {
+                            MyStore store = storesList.elementAt(index);
+                            return Marker(
+                                markerId: MarkerId(store.name),
+                                position: LatLng(store.lat, store.long));
+                          }).toSet(),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: storesList.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: GestureDetector(
+                                onTap: () {
+                                  changePosition(storesList.elementAt(index));
+                                },
+                                child: PlanCard(
+                                  company: storesList
+                                      .elementAt(index)
+                                      .name
                                       .toString(),
-                              retailerId: storesList
-                                  .elementAt(index)
-                                  .plan!['createdBy']
-                                  .toString(),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                                  cashback: storesList
+                                      .elementAt(index)
+                                      .plan!['cashback']
+                                      .toString(),
+                                  requiredSpend: storesList
+                                      .elementAt(index)
+                                      .plan!['required_spend']
+                                      .toString(),
+                                  endDate: (storesList
+                                          .elementAt(index)
+                                          .plan!['endDate'])
+                                      .toString(),
+                                  retailerId: storesList
+                                      .elementAt(index)
+                                      .plan!['createdBy']
+                                      .toString(),
+                                  button: getButton(index),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 
-  void _savePlan(String id) {
+  Widget getButton(int index) {
+    return MaterialButton(
+      onPressed: () {
+        _savePlan(storesList.elementAt(index).plan!.id.toString(),
+            storesList.elementAt(index).plan!["endDate"]);
+      },
+      color: Colors.green,
+      child: Text("Start!"),
+      textColor: Colors.white,
+    );
+  }
+
+  void _savePlan(String id, String end) {
     setState(() {
       isLoading = true;
     });
@@ -257,6 +273,8 @@ class _PlanScreenState extends State<PlanScreen> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update({
             "plan_id": id,
+            "endDate": end,
+            "startDate": DateFormat("dd/MM/yyyy").format(DateTime.now()),
           })
           .then((value) => {
                 ScaffoldMessenger.of(context).showSnackBar(
