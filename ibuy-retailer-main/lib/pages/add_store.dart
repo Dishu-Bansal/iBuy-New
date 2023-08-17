@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
@@ -313,17 +314,34 @@ class AddStore extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (formKey.currentState!.validate()) {
-                            storeController.addStore(
-                                storeController.storeName.text,
-                                storeController.storeCode.text,
-                                storeController.province.text,
-                                storeController.country.text,
-                                storeController.postalCode.text,
-                                storeController.city.text,
-                                storeController.add1.text,
-                                storeController.add2.text);
+                            try {
+                              List<Location> coord = await locationFromAddress(
+                                  storeController.add1.text +
+                                      ", " +
+                                      storeController.add2.text +
+                                      ", " +
+                                      storeController.city.text +
+                                      ", " +
+                                      storeController.province.text +
+                                      ", " +
+                                      storeController.country.text +
+                                      " " +
+                                      storeController.postalCode.text);
+                              storeController.addStore(
+                                  storeController.storeName.text,
+                                  storeController.storeCode.text,
+                                  storeController.province.text,
+                                  storeController.country.text,
+                                  storeController.postalCode.text,
+                                  storeController.city.text,
+                                  storeController.add1.text,
+                                  storeController.add2.text);
+                            } catch (e) {
+                              Get.snackbar("Input error",
+                                  "Error finding location. Please double check the address");
+                            }
                           } else {
                             //display error message with snackbar
                             Get.snackbar(
