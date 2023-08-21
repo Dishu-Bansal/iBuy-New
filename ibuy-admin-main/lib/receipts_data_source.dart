@@ -13,6 +13,8 @@ class ReceiptsDataSource extends DataTableSource {
           Text(receiptController.receiptModals[index].retailerName.toString())),
       DataCell(Text(receiptController.receiptModals[index].userId.toString())),
       const DataCell(Text("")),
+      DataCell(
+          Text(receiptController.receiptModals[index].totalSpend.toString())),
       DataCell(Text(receiptController.receiptModals[index].trxDate.toString())),
 
       //DataCell(Text(receiptController.receiptModals[index].userId.toString())),
@@ -36,7 +38,7 @@ class ReceiptsDataSource extends DataTableSource {
                         style: TextStyle(color: Colors.white),
                       ),
                     )
-                  : receiptController.receiptModals[index].status! == ""
+                  : receiptController.receiptModals[index].status! == "Pending"
                       ? const Chip(
                           backgroundColor: Color(0xff6F6F6F),
                           label: Text(

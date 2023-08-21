@@ -66,6 +66,9 @@ class ReceiptsScreen extends StatelessWidget {
                           label: Text('Plan ID'),
                         ),
                         DataColumn(
+                          label: Text('Spend Amount'),
+                        ),
+                        DataColumn(
                           label: Text('Submission Date'),
                         ),
                         DataColumn(
