@@ -83,7 +83,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
     String idd = Userr.userData.planId;
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(Userr.userData.uid)
         .get()
         .then((value) {
       //setState(() {
