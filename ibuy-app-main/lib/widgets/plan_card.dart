@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../models/myuser.dart';
 
 class PlanCard extends StatefulWidget {
   final String company;
@@ -91,7 +94,7 @@ class _PlanCardState extends State<PlanCard> {
                     children: [
                       TextSpan(text: "Spend "),
                       TextSpan(
-                        text: "\$${widget.requiredSpend}",
+                        text: "\$${Userr.userData.budget.toString()}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -100,7 +103,8 @@ class _PlanCardState extends State<PlanCard> {
                       ),
                       TextSpan(text: " before "),
                       TextSpan(
-                          text: widget.endDate,
+                          text: DateFormat("dd/MM/yyyy")
+                              .format(DateTime.now().add(Duration(days: 28))),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,

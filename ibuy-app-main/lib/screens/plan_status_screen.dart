@@ -312,12 +312,17 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                               backgroundColor:
                                                   const Color(0xffE8E8E8),
                                               value: ((DateFormat("dd/MM/yyyy")
-                                                          .parse(Userr
-                                                              .userData.end!)
-                                                          .difference(
-                                                              DateTime.now()))
-                                                      .inDays /
-                                                  (DateFormat("dd/MM/yyyy")
+                                                              .parse(Userr
+                                                                  .userData
+                                                                  .end!)
+                                                              .add(Duration(
+                                                                  days: 1))
+                                                              .difference(
+                                                                  DateTime
+                                                                      .now()))
+                                                          .inDays /
+                                                      28
+                                                  /*(DateFormat("dd/MM/yyyy")
                                                           .parse(Userr
                                                               .userData.end!)
                                                           .difference((DateFormat(
@@ -325,7 +330,8 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                               .parse(Userr
                                                                   .userData
                                                                   .start!))))
-                                                      .inDays),
+                                                      .inDays*/
+                                                  ),
                                               child: planCompleted
                                                   ? const Icon(
                                                       Icons.check,
@@ -343,17 +349,22 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                                           .parse(Userr
                                                                               .userData
                                                                               .end!)
-                                                                          .difference(DateTime
-                                                                              .now()))
+                                                                          .add(Duration(
+                                                                              days:
+                                                                                  1))
+                                                                          .difference(
+                                                                              DateTime.now()))
                                                                       .inDays /
-                                                                  (DateFormat("dd/MM/yyyy")
+                                                                  28
+                                                              /*(DateFormat("dd/MM/yyyy")
                                                                           .parse(Userr
                                                                               .userData
                                                                               .end!)
                                                                           .difference((DateFormat("dd/MM/yyyy").parse(Userr
                                                                               .userData
                                                                               .start!))))
-                                                                      .inDays) *
+                                                                      .inDays*/
+                                                              ) *
                                                               100,
                                                           unit: '%',
                                                           duration: Duration(
@@ -378,6 +389,8 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                                 "dd/MM/yyyy")
                                                             .parse(Userr
                                                                 .userData.end!)
+                                                            .add(Duration(
+                                                                days: 1))
                                                             .difference(
                                                                 DateTime.now())
                                                             .inDays

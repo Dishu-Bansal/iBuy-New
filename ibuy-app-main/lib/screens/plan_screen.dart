@@ -273,7 +273,8 @@ class _PlanScreenState extends State<PlanScreen> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update({
             "plan_id": id,
-            "endDate": end,
+            "endDate": DateFormat("dd/MM/yyyy")
+                .format(DateTime.now().add(Duration(days: 28))),
             "startDate": DateFormat("dd/MM/yyyy").format(DateTime.now()),
           })
           .then((value) => {
