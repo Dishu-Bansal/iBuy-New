@@ -89,7 +89,7 @@ class PlanController extends GetxController {
       "maxSpend": double.parse(maxSpendCon.text),
       "maxCustomers": int.parse(maxCustomersCon.text),
       "minCashback": double.parse(minCashbackCon.text),
-      "maxCashback": double.parse(minCashbackCon.text),
+      "maxCashback": double.parse(maxCustomersCon.text),
       "creation": DateTime.now(),
       "createdBy": FirebaseAuth.instance.currentUser!.uid,
       "cashback": double.parse(cashBack.text),
