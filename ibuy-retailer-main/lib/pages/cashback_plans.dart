@@ -78,6 +78,9 @@ class CashBackPlans extends StatelessWidget {
                           label: Text('Max Cashback'),
                         ),
                         DataColumn(
+                          label: Text('Cashback'),
+                        ),
+                        DataColumn(
                           label: Text('Status'),
                         ),
                       ],

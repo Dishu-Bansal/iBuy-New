@@ -43,6 +43,7 @@ class PlanDataSource extends DataTableSource {
       DataCell(Text(planController.plans[index].maxSpend.toString())),
       DataCell(Text(planController.plans[index].minCashback.toString())),
       DataCell(Text(planController.plans[index].maxCashback.toString())),
+      DataCell(Text(planController.plans[index].cashback.toString())),
       DataCell(Obx(
         () => Chip(
           label: Text(
