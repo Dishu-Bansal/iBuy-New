@@ -24,165 +24,170 @@ class ProcessReceiptScreen extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Form(
-                    key: formKey,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                            width: 300,
-                            child: Obx(
-                              () => Text(
-                                  "Customer ID: ${receiptController.customerId}"),
-                            )),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: TextFormField(
-                            controller: receiptController.retailerName,
-                            cursorColor: Colors.black45,
-                            decoration: InputDecoration(
-                              labelText: "Retailer Name",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelStyle:
-                                  const TextStyle(color: Colors.black45),
-
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Field cannot be empty";
-                              }
-                              return null;
-                            },
+                  if (receiptController.pendingReceipts.length == 0) {
+                    return Center(
+                      child: Text("No receipts to Process!"),
+                    );
+                  } else {
+                    return Form(
+                      key: formKey,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                              width: 300,
+                              child: Obx(
+                                () => Text(
+                                    "Customer ID: ${receiptController.customerId}"),
+                              )),
+                          const SizedBox(
+                            width: 10,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: TextFormField(
-                            controller: receiptController.trxDate,
-                            keyboardType: TextInputType.datetime,
-                            cursorColor: Colors.black45,
-                            decoration: InputDecoration(
-                              labelText: "Transaction Date (DD-MM-YYYY)",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-
-                              filled: true,
-                              labelStyle:
-                                  const TextStyle(color: Colors.black45),
-
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
+                          Flexible(
+                            child: TextFormField(
+                              controller: receiptController.retailerName,
+                              cursorColor: Colors.black45,
+                              decoration: InputDecoration(
+                                labelText: "Retailer Name",
+                                //border: OutlineInputBorder(),
+                                fillColor: Colors.white,
+                                filled: true,
+                                labelStyle:
+                                    const TextStyle(color: Colors.black45),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Field cannot be empty";
+                                }
+                                return null;
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Field cannot be empty";
-                              }
-                              return null;
-                            },
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: TextFormField(
-                            controller: receiptController.totalSpend,
-                            cursorColor: Colors.black45,
-                            decoration: InputDecoration(
-                              labelText: "Total Spend",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelStyle:
-                                  const TextStyle(color: Colors.black45),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: TextFormField(
+                              controller: receiptController.trxDate,
+                              keyboardType: TextInputType.datetime,
+                              cursorColor: Colors.black45,
+                              decoration: InputDecoration(
+                                labelText: "Transaction Date (DD-MM-YYYY)",
+                                //border: OutlineInputBorder(),
+                                fillColor: Colors.white,
 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Field cannot be empty";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: TextFormField(
-                            controller: receiptController.last4Digits,
-                            cursorColor: Colors.black45,
-                            decoration: InputDecoration(
-                              labelText: "Last 4 digits",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelStyle:
-                                  const TextStyle(color: Colors.black45),
+                                filled: true,
+                                labelStyle:
+                                    const TextStyle(color: Colors.black45),
 
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Field cannot be empty";
+                                }
+                                return null;
+                              },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Field cannot be empty";
-                              }
-                              return null;
-                            },
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: TextFormField(
+                              controller: receiptController.totalSpend,
+                              cursorColor: Colors.black45,
+                              decoration: InputDecoration(
+                                labelText: "Total Spend",
+                                //border: OutlineInputBorder(),
+                                fillColor: Colors.white,
+                                filled: true,
+                                labelStyle:
+                                    const TextStyle(color: Colors.black45),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Field cannot be empty";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Flexible(
+                            child: TextFormField(
+                              controller: receiptController.last4Digits,
+                              cursorColor: Colors.black45,
+                              decoration: InputDecoration(
+                                labelText: "Last 4 digits",
+                                //border: OutlineInputBorder(),
+                                fillColor: Colors.white,
+                                filled: true,
+                                labelStyle:
+                                    const TextStyle(color: Colors.black45),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Field cannot be empty";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 }
               }),
         ),
