@@ -8,6 +8,7 @@ class ReceiptController extends GetxController {
   final receiptModals = <ReceiptModal>[].obs;
   var index = 0;
   var customerId = "".obs;
+  List<ReceiptModal> pendingReceipts = List.empty(growable: true);
 
   //Text editing controllers
 
@@ -30,22 +31,26 @@ class ReceiptController extends GetxController {
       print("Error: $e");
     }
 
-    customerId.value = receiptModals[index].userId!;
-    currReceiptUrl.value = receiptModals[index].imageUrl!;
+    pendingReceipts =
+        receiptModals.where((p) => p.status == "Pending").toList();
+    if (pendingReceipts.length >= 1) {
+      customerId.value = pendingReceipts[index].userId!;
+      currReceiptUrl.value = pendingReceipts[index].imageUrl!;
+    }
   }
 
   void nextReceipt() {
-    if (index >= receiptModals.length - 1) {
+    if (index >= pendingReceipts.length - 1) {
       index = 0;
     }
-    currReceiptUrl.value = receiptModals[++index].imageUrl!;
-    customerId.value = receiptModals[index].userId!;
+    currReceiptUrl.value = pendingReceipts[++index].imageUrl!;
+    customerId.value = pendingReceipts[index].userId!;
   }
 
   void approveReceipt() {
     FirebaseFirestore.instance
         .collection('receipts')
-        .doc(receiptModals[index].id)
+        .doc(pendingReceipts[index].id)
         .update({
       'status': "approved",
       'retailerName': retailerName.text,
@@ -60,6 +65,9 @@ class ReceiptController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
+      pendingReceipts.removeAt(index);
+      currReceiptUrl.value = "";
+      customerId.value = "";
       nextReceipt();
       clearTextFields();
     });
@@ -70,7 +78,7 @@ class ReceiptController extends GetxController {
   void rejectReceipt() {
     FirebaseFirestore.instance
         .collection('receipts')
-        .doc(receiptModals[index].id)
+        .doc(pendingReceipts[index].id)
         .update({'status': "rejected"}).then((value) {
       Get.snackbar(
         "Receipt Rejected",
@@ -79,7 +87,11 @@ class ReceiptController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
+      pendingReceipts.removeAt(index);
+      currReceiptUrl.value = "";
+      customerId.value = "";
       nextReceipt();
+      clearTextFields();
     });
   }
 
@@ -93,7 +105,7 @@ class ReceiptController extends GetxController {
   void reUpload() {
     FirebaseFirestore.instance
         .collection('receipts')
-        .doc(receiptModals[index].id)
+        .doc(pendingReceipts[index].id)
         .update({'status': 'reupload'}).then((value) {
       Get.snackbar(
         "Receipt Status",
