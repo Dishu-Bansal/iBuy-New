@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/authentication/create_account_screen.dart';
 import 'package:freelance_ibuy_app/constants.dart';
+import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
 import 'package:freelance_ibuy_app/widgets/update_profile_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -192,6 +193,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               ],
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Row(
+                              children: [
+                                const Text("Member Since - "),
+                                Text(
+                                    DateFormat("dd/MM/yyyy").format(
+                                        DateTime.parse(
+                                            Userr.userData.createdAt!)),
+                                    style: greyStyle),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -204,8 +218,35 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           color: const Color(0xff666666),
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        child: Icon(
+                          Icons.access_time,
+                          color: Colors.white,
+                        )),
+                    title: const Text('Plan Status'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => const PlanStatusScreen(),
+                        ),
+                      ).then((value) {
+                        setState(() {
+                          name = value['name'];
+                          email = value['email'];
+                        });
+                      });
+                    },
+                  ),
+                  ListTile(
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xff666666),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Image.asset("assets/profile.png")),
-                    title: const Text('Full Profile'),
+                    title: const Text('Profile'),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -327,6 +368,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       );
                     },
                   ),
+                  Spacer(),
                   Padding(
                     padding:
                         const EdgeInsets.only(top: 45, right: 20, left: 20),
