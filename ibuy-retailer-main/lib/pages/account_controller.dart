@@ -29,7 +29,7 @@ class AccountActivationController extends GetxController {
         "password": password,
         "uid": value.user!.uid,
         "retailer_name": retailer,
-        "status": false,
+        "status": null,
         "creationDate": DateTime.now().millisecondsSinceEpoch,
       }).then((value) {
         //navigate to login page
