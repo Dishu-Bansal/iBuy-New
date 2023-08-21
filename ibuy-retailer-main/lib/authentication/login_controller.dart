@@ -27,14 +27,18 @@ class LoginController extends GetxController {
           Get.snackbar("Success", "Login successful",
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.green,
-              colorText: Colors.white);
+              colorText: Colors.white,
+              isDismissible: true,
+              duration: Duration(seconds: 15));
           Get.offAll(() => const HomePage());
         } else {
           Get.snackbar("Error",
               "Account has not been approved yet. Please contact the administrator",
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.red,
-              colorText: Colors.white);
+              colorText: Colors.white,
+              isDismissible: true,
+              duration: Duration(seconds: 15));
           await FirebaseAuth.instance.signOut();
         }
       });
@@ -42,12 +46,16 @@ class LoginController extends GetxController {
       Get.snackbar("Error", onError.toString(),
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
-          colorText: Colors.white);
+          colorText: Colors.white,
+          isDismissible: true,
+          duration: Duration(seconds: 15));
     }).catchError((onError) {
       Get.snackbar("Error", onError.toString(),
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
-          colorText: Colors.white);
+          colorText: Colors.white,
+          isDismissible: true,
+          duration: Duration(seconds: 15));
     });
   }
 }

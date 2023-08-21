@@ -112,7 +112,9 @@ class LoginPage extends StatelessWidget {
                           Get.snackbar("Error", "Please fill all the fields",
                               snackPosition: SnackPosition.BOTTOM,
                               backgroundColor: Colors.red,
-                              colorText: Colors.white);
+                              colorText: Colors.white,
+                              isDismissible: true,
+                              duration: Duration(seconds: 15));
                         }
                       },
                       child: Container(
