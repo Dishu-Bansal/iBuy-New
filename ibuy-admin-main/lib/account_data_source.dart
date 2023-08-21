@@ -44,7 +44,7 @@ class AccountsDataSource extends DataTableSource {
       DataCell(Text(accController.accounts[index].retailerName.toString())),
       DataCell(
         //if the status is "new", return a chip with purple background with text "new", if the status is "approved", return a chip with green background with text "approved" and if the status is "rejected", return a chip with red background with text "rejected"
-        Obx(() => accController.accounts[index].status! != null
+        Obx(() => accController.accounts[index].status != null
             ? (accController.accounts[index].status!
                 ? const Chip(
                     backgroundColor: Color(0xff35BF84),
