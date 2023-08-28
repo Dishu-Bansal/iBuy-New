@@ -29,7 +29,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   void getReceipts() async {
     spent = 0;
     try {
-      print("User UID in plan status screen: " + Userr().uid.toString());
+      print("User ID in plan status screen: " + Userr().uid.toString());
       print("Firebase UId: " + FirebaseAuth.instance.currentUser!.uid);
       await FirebaseFirestore.instance
           .collection('receipts')
