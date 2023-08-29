@@ -319,7 +319,7 @@ class AddStore extends StatelessWidget {
                             try {
                               List<Location> coord = await locationFromAddress(
                                   storeController.add1.text +
-                                      ", " +
+                                      " " +
                                       storeController.add2.text +
                                       ", " +
                                       storeController.city.text +
