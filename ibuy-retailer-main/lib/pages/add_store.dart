@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:geocode/geocode.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
 class AddStore extends StatelessWidget {
-  const AddStore({super.key});
+  AddStore({super.key});
+  GeoCode geoCode = GeoCode();
 
   @override
   Widget build(BuildContext context) {
@@ -317,18 +318,19 @@ class AddStore extends StatelessWidget {
                         onTap: () async {
                           if (formKey.currentState!.validate()) {
                             try {
-                              List<Location> coord = await locationFromAddress(
-                                  storeController.add1.text +
-                                      " " +
-                                      storeController.add2.text +
-                                      ", " +
-                                      storeController.city.text +
-                                      ", " +
-                                      storeController.province.text +
-                                      ", " +
-                                      storeController.country.text +
-                                      " " +
-                                      storeController.postalCode.text);
+                              Coordinates coord =
+                                  await geoCode.forwardGeocoding(
+                                      address: storeController.add1.text +
+                                          " " +
+                                          storeController.add2.text +
+                                          ", " +
+                                          storeController.city.text +
+                                          ", " +
+                                          storeController.province.text +
+                                          ", " +
+                                          storeController.country.text +
+                                          " " +
+                                          storeController.postalCode.text);
                               storeController.addStore(
                                   storeController.storeName.text,
                                   storeController.storeCode.text,
@@ -339,8 +341,10 @@ class AddStore extends StatelessWidget {
                                   storeController.add1.text,
                                   storeController.add2.text);
                             } catch (e) {
-                              Get.snackbar("Input error",
-                                  "Error finding location. Please double check the address");
+                              Get.snackbar(
+                                  "Input error",
+                                  "Error finding location. Please double check the address. " +
+                                      e.toString());
                             }
                           } else {
                             //display error message with snackbar

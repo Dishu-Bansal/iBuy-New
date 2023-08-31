@@ -211,7 +211,7 @@ class _StoreListState extends State<StoreList> {
                     GestureDetector(
                       onTap: () {
                         //storeController.showStoreList.value = false;
-                        Get.to(() => const AddStore())?.then((value) {
+                        Get.to(() => AddStore())?.then((value) {
                           storeController.update();
                           return;
                         });
