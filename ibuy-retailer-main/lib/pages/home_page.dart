@@ -90,7 +90,7 @@ class HomePage extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 Get.defaultDialog(
-                  title: "Logout",
+                  title: "Logout - Added by Aman",
                   content: const Text("Are you sure, you want to logout?"),
                   textConfirm: "Yes",
                   textCancel: "No",
