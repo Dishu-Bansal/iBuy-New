@@ -22,6 +22,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   String company = "";
   var budget = 1.0;
   bool planCompleted = false;
+  bool endDateReached = false;
 
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
 
@@ -81,13 +82,30 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
     // print("in plan with id");
 
     String idd = Userr.userData.planId;
+    String userid = await FirebaseAuth.instance.currentUser!.uid;
     await FirebaseFirestore.instance
         .collection('User')
-        .doc(Userr.userData.uid)
+        .doc(userid)
         .get()
-        .then((value) {
+        .then((value) async {
       //setState(() {
       idd = value.data()!['plan_id'];
+      if (DateFormat("dd/MM/yyyy")
+              .parse(value.data()!['endDate'])
+              .compareTo(DateTime.now()) ==
+          -1) {
+        endDateReached = true;
+      }
+      if (endDateReached) {
+        await FirebaseFirestore.instance
+            .collection("User")
+            .doc(Userr.userData.uid)
+            .update({
+          "plan_id": "",
+          "startDate": "",
+          "endDate": "",
+        });
+      }
       debugPrint("idd: $idd");
       //debugPrint("plansList.length ${plansList.length}");
 
@@ -145,10 +163,14 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Userr.userData.planId == ""
                               ? Text("No plans yet. Lets Select a plan!")
-                              : (planCompleted
+                              : (endDateReached
                                   ? const Text(
-                                      "Congratulations! You've completed the plan.")
-                                  : const Text("You're almost here!!!")),
+                                      "Unfortunately, Plan has ended.",
+                                    )
+                                  : (planCompleted
+                                      ? const Text(
+                                          "Congratulations! You've completed the plan.")
+                                      : const Text("You're almost here!!!"))),
                         ),
                       ],
                     ),
@@ -306,11 +328,14 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                           children: [
                                             CircleProgressBar(
                                               strokeWidth: 10,
-                                              foregroundColor: planCompleted
-                                                  ? Color(0xff3DBB85)
-                                                  : Color(0xff9D87FF),
-                                              backgroundColor:
-                                                  const Color(0xffE8E8E8),
+                                              foregroundColor: endDateReached
+                                                  ? Colors.redAccent
+                                                  : (planCompleted
+                                                      ? Color(0xff3DBB85)
+                                                      : Color(0xff9D87FF)),
+                                              backgroundColor: endDateReached
+                                                  ? Colors.redAccent
+                                                  : const Color(0xffE8E8E8),
                                               value: ((DateFormat("dd/MM/yyyy")
                                                               .parse(Userr
                                                                   .userData
@@ -332,31 +357,33 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                                   .start!))))
                                                       .inDays*/
                                                   ),
-                                              child: planCompleted
+                                              child: endDateReached
                                                   ? const Icon(
-                                                      Icons.check,
-                                                      color: Color(0xff3DBB85),
+                                                      Icons.cancel,
+                                                      color: Colors.redAccent,
                                                       size: 60,
                                                     )
-                                                  : Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        AnimatedCount(
-                                                          fractionDigits: 0,
-                                                          count: ((DateFormat("dd/MM/yyyy")
-                                                                          .parse(Userr
-                                                                              .userData
-                                                                              .end!)
-                                                                          .add(Duration(
-                                                                              days:
-                                                                                  1))
-                                                                          .difference(
-                                                                              DateTime.now()))
-                                                                      .inDays /
-                                                                  28
-                                                              /*(DateFormat("dd/MM/yyyy")
+                                                  : (planCompleted
+                                                      ? const Icon(
+                                                          Icons.check,
+                                                          color:
+                                                              Color(0xff3DBB85),
+                                                          size: 60,
+                                                        )
+                                                      : Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            AnimatedCount(
+                                                              fractionDigits: 0,
+                                                              count: ((DateFormat("dd/MM/yyyy")
+                                                                              .parse(Userr.userData.end!)
+                                                                              .add(Duration(days: 1))
+                                                                              .difference(DateTime.now()))
+                                                                          .inDays /
+                                                                      28
+                                                                  /*(DateFormat("dd/MM/yyyy")
                                                                           .parse(Userr
                                                                               .userData
                                                                               .end!)
@@ -364,16 +391,16 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                                               .userData
                                                                               .start!))))
                                                                       .inDays*/
-                                                              ) *
-                                                              100,
-                                                          unit: '%',
-                                                          duration: Duration(
-                                                              milliseconds:
-                                                                  500),
-                                                        ),
-                                                        Text("Time Left")
-                                                      ],
-                                                    ),
+                                                                  ) *
+                                                                  100,
+                                                              unit: '%',
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                            ),
+                                                            Text("Time Left")
+                                                          ],
+                                                        )),
                                             ),
                                             Padding(
                                               padding:
@@ -439,12 +466,17 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                           children: [
                                             CircleProgressBar(
                                               strokeWidth: 10,
-                                              foregroundColor: planCompleted
-                                                  ? const Color(0xff3DBB85)
-                                                  : const Color(0xff4EA3F2),
-                                              backgroundColor: planCompleted
-                                                  ? const Color(0xff3DBB85)
-                                                  : const Color(0xffE8E8E8),
+                                              foregroundColor: endDateReached
+                                                  ? Colors.redAccent
+                                                  : (planCompleted
+                                                      ? const Color(0xff3DBB85)
+                                                      : const Color(
+                                                          0xff4EA3F2)),
+                                              backgroundColor: endDateReached
+                                                  ? Colors.redAccent
+                                                  : planCompleted
+                                                      ? const Color(0xff3DBB85)
+                                                      : const Color(0xffE8E8E8),
                                               value:
                                                   spent >= Userr.userData.budget
                                                       ? 0
@@ -453,40 +485,46 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                                   Userr.userData
                                                                       .budget)
                                                               .toDouble(),
-                                              child: planCompleted
+                                              child: endDateReached
                                                   ? const Icon(
-                                                      Icons.check,
-                                                      color: Color(0xff3DBB85),
+                                                      Icons.cancel,
+                                                      color: Colors.redAccent,
                                                       size: 60,
                                                     )
-                                                  : Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        AnimatedCount(
-                                                          fractionDigits: 0,
-                                                          count: spent >=
-                                                                  Userr.userData
-                                                                      .budget
-                                                              ? 0
-                                                              : 100 -
-                                                                  (spent /
-                                                                          Userr
-                                                                              .userData
-                                                                              .budget *
-                                                                          100)
-                                                                      .toDouble(),
-                                                          unit: '%',
-                                                          duration:
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      500),
-                                                        ),
-                                                        const Text(
-                                                            "Spending Left")
-                                                      ],
-                                                    ),
+                                                  : (planCompleted
+                                                      ? const Icon(
+                                                          Icons.check,
+                                                          color:
+                                                              Color(0xff3DBB85),
+                                                          size: 60,
+                                                        )
+                                                      : Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            AnimatedCount(
+                                                              fractionDigits: 0,
+                                                              count: spent >=
+                                                                      Userr
+                                                                          .userData
+                                                                          .budget
+                                                                  ? 0
+                                                                  : 100 -
+                                                                      (spent /
+                                                                              Userr.userData.budget *
+                                                                              100)
+                                                                          .toDouble(),
+                                                              unit: '%',
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          500),
+                                                            ),
+                                                            const Text(
+                                                                "Spending Left")
+                                                          ],
+                                                        )),
                                             ),
                                             Padding(
                                               padding:
@@ -535,7 +573,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                           ? const EdgeInsets.symmetric(vertical: 40)
                           : const EdgeInsets.symmetric(vertical: 0),
                       child: ReceiptWidget(
-                          isPlanCompleted: planCompleted,
+                          isPlanCompleted: planCompleted || endDateReached,
                           anyPlan: Userr.userData.planId == ""),
                     ),
                   ],
