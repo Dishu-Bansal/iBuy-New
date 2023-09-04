@@ -346,6 +346,12 @@ class AddStore extends StatelessWidget {
                                   "Error finding location. Please double check the address. " +
                                       e.toString());
                             }
+                            if (storeController.stores.any((element) =>
+                                element.storeCode! ==
+                                storeController.storeCode.text)) {
+                              Get.snackbar("Input error",
+                                  "Same Store Code already exits.");
+                            }
                           } else {
                             //display error message with snackbar
                             Get.snackbar(
