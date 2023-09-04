@@ -76,7 +76,7 @@ class AccountController extends GetxController {
           await FirebaseFirestore.instance
               .collection("plans")
               .doc(plan.id)
-              .update({"status": false});
+              .update({"status": "InActive"});
         }
       });
     }
