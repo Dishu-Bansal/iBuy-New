@@ -61,7 +61,8 @@ class _CashBackScreenState extends State<CashBackScreen> {
           inProcessCashback += element.data()['amount'];
         } else {
           earnedCashback += element.data()['amount'];
-          redemableCashback += element.data()['amount'];
+          redemedCashback += element.data()['amount'];
+          redemableCashback = spent - redemedCashback;
         }
       }
 
@@ -286,9 +287,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    !casbackPaid
-                                        ? "\$$redemableCashback"
-                                        : "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
+                                    "\$$redemableCashback",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )
