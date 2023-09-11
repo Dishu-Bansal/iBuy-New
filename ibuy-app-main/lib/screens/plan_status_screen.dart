@@ -536,7 +536,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                   planCompleted
                                                       ? const Text("")
                                                       : Text(
-                                                          "\$${spent.toString()}",
+                                                          "\$${(Userr.userData.budget - spent).toString()}",
                                                           style:
                                                               const TextStyle(
                                                                   fontWeight:
