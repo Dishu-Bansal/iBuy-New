@@ -225,7 +225,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$${(cashback / 100 * spent).toStringAsFixed(2)}",
+                                    "\$${(cashback / 100 * Userr.userData.budget).toStringAsFixed(2)}",
                                     style: const TextStyle(
                                       color: Color(0xff3DBB85),
                                       fontSize: 20,
