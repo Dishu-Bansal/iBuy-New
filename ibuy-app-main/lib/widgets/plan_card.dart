@@ -25,7 +25,7 @@ class PlanCard extends StatefulWidget {
 
 class _PlanCardState extends State<PlanCard> {
   bool loaded = false;
-  int budget = 0;
+  double budget = 0;
   var retailerName = "";
   void getRetailerName(String retailerId) async {
     print("Retailer ID: " + retailerId.toString());
