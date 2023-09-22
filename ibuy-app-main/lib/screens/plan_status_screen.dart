@@ -36,6 +36,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
           .collection('receipts')
           .where("user_uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           .where("status", isEqualTo: "approved")
+          .where("plan_id", isEqualTo: Userr().planId)
           .get()
           .then((value) {
         for (var element in value.docs) {

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/constants.dart';
+import 'package:freelance_ibuy_app/models/myuser.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -207,6 +208,7 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
       "totalSpend": "",
       "trxDate": "",
       "last4Digits": "",
+      "plan_id": Userr.userData.planId,
     }).then((value) {
       //Display a snackbar with success message
       ScaffoldMessenger.of(context).showSnackBar(
