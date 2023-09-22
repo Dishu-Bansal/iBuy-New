@@ -10,6 +10,7 @@ class ReceiptModal {
   String? trxDate;
   String? totalSpend;
   String? last4digits;
+  String? planId;
 
   ReceiptModal({
     this.imageUrl,
@@ -20,6 +21,7 @@ class ReceiptModal {
     this.last4digits,
     this.totalSpend,
     this.trxDate,
+    this.planId,
   });
 
   ReceiptModal.fromMap(DocumentSnapshot map) {
@@ -32,5 +34,6 @@ class ReceiptModal {
     trxDate = map['trxDate'];
     totalSpend = map['totalSpend'];
     last4digits = map['last4Digits'];
+    planId = map['plan_id'];
   }
 }
