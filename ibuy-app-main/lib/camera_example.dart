@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:freelance_ibuy_app/constants.dart';
+import 'package:freelance_ibuy_app/models/myuser.dart';
 import 'package:freelance_ibuy_app/screens/receipt_upload_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 import 'package:image_picker/image_picker.dart';
@@ -450,6 +451,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       "totalSpend": "",
       "trxDate": "",
       "last4Digits": "",
+      "plan_id": Userr.userData.planId,
     }).then((value) {
       //Display a snackbar with success message
       ScaffoldMessenger.of(context).showSnackBar(
