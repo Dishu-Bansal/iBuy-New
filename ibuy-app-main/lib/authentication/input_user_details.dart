@@ -234,7 +234,7 @@ class _InputUserDetailsState extends State<InputUserDetails> {
       //getDataFromDB(Userr.userData.uid ?? "");
       //showToast("Thanks for Sign Up", context);
 
-      AppRoutes.push(context, const GroceryBudgetScreen());
+      AppRoutes.push(context, GroceryBudgetScreen(false));
 
       // infoDialogue(context, "Thanks you for applying,\n We’ll come back to you soon.");
     });

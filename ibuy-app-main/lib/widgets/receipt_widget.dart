@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:freelance_ibuy_app/screens/plan_screen.dart';
+import 'package:freelance_ibuy_app/screens/grocery_budget_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 
 import '../camera_example.dart';
+import '../models/myuser.dart';
 
 class ReceiptWidget extends StatefulWidget {
   final bool isPlanCompleted;
@@ -39,7 +41,27 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
           child: InkWell(
             child: InkWell(
-              onTap: () => AppRoutes.push(context, const PlanScreen()),
+              onTap: () async {
+                await FirebaseFirestore.instance
+                    .collection("User")
+                    .doc(Userr.userData.uid)
+                    .update({
+                  "plan_id": "",
+                  "startDate": "",
+                  "endDate": "",
+                });
+                await FirebaseFirestore.instance
+                    .collection("User")
+                    .doc(Userr.userData.uid)
+                    .collection("plan_history")
+                    .add({
+                  "plan_id": Userr.userData.planId,
+                  "budget": 0,
+                  "status": "Cancelled",
+                });
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (_) => GroceryBudgetScreen(true)));
+              },
               child: Container(
                 decoration: BoxDecoration(
                     color: const Color(0xffFFFFFF),
@@ -98,7 +120,8 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
                         height: 50,
                         child: const Center(
                           child: Text(
-                            "SCAN RECEIPTS",
+                            "SCAN "
+                            "RECEIPTS",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,

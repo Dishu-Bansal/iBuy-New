@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:freelance_ibuy_app/screens/plan_screen.dart';
+
 import '../widgets/get_location_widget.dart';
 
 class GroceryBudgetScreen extends StatefulWidget {
-  const GroceryBudgetScreen({super.key});
+  bool newPlan = false;
+  GroceryBudgetScreen(bool this.newPlan, {super.key});
 
   @override
   State<GroceryBudgetScreen> createState() => _GroceryBudgetScreenState();
@@ -37,7 +40,9 @@ class _GroceryBudgetScreenState extends State<GroceryBudgetScreen> {
                   ),
                   isScrollControlled: true,
                   context: currentContext,
-                  builder: (context) => const GetLocationWidget(),
+                  builder: (context) => widget.newPlan
+                      ? const PlanScreen()
+                      : const GetLocationWidget(),
                 )
               });
 

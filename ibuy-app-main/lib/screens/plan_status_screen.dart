@@ -38,16 +38,35 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
           .where("status", isEqualTo: "approved")
           .where("plan_id", isEqualTo: Userr().planId)
           .get()
-          .then((value) {
+          .then((value) async {
         for (var element in value.docs) {
           spent += int.parse(element.data()['totalSpend']);
         }
 
         print("spent: " + spent.toString());
 
-        setState(() {
+        planCompleted = spent / Userr.userData.budget >= 1 ? true : false;
+        if (planCompleted) {
+          await FirebaseFirestore.instance
+              .collection("User")
+              .doc(Userr.userData.uid)
+              .update({
+            "plan_id": "",
+            "startDate": "",
+            "endDate": "",
+          });
+          await FirebaseFirestore.instance
+              .collection("User")
+              .doc(Userr.userData.uid)
+              .collection("plan_history")
+              .add({
+            "plan_id": Userr.userData.planId,
+            "budget": Userr.userData.budget,
+            "status": "Completed",
+          });
+        }
+        setState(() async {
           isLoading = false;
-          planCompleted = spent / Userr.userData.budget >= 1 ? true : false;
         });
       });
     } catch (e) {
@@ -105,6 +124,15 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
           "plan_id": "",
           "startDate": "",
           "endDate": "",
+        });
+        await FirebaseFirestore.instance
+            .collection("User")
+            .doc(Userr.userData.uid)
+            .collection("plan_history")
+            .add({
+          "plan_id": Userr.userData.planId,
+          "budget": 0,
+          "status": "Expired",
         });
       }
       debugPrint("idd: $idd");
