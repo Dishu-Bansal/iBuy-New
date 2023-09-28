@@ -9,7 +9,6 @@ import 'package:freelance_ibuy_app/intro.dart';
 import 'package:freelance_ibuy_app/screens/grocery_budget_screen.dart';
 import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
 import 'package:freelance_ibuy_app/utils.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:overlay_support/overlay_support.dart';
 
@@ -244,11 +243,11 @@ class _MyAppState extends State<MyApp> {
     if (user != null) {
       checkUserFilledData().then((value) {
         if (hasFilledData == false) {
-          return const OverlaySupport(
+          return OverlaySupport(
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
-              home:
-                  GroceryBudgetScreen(), // Replace `AnotherScreen` with the screen you want to navigate to.
+              home: GroceryBudgetScreen(
+                  false), // Replace `AnotherScreen` with the screen you want to navigate to.
             ),
           );
         }

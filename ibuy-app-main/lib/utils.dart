@@ -29,7 +29,7 @@ class Utils {
       await FirebaseAuth.instance
           .signInWithCredential(credential)
           .then((value) {
-        AppRoutes.push(context, const GroceryBudgetScreen());
+        AppRoutes.push(context, GroceryBudgetScreen(false));
       }).catchError((onError) => null);
 
       await userUploadToDB(googleUser);
