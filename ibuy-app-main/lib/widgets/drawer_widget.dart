@@ -49,7 +49,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       Map<String, dynamic>? d = e.data();
       if (d != null) {
         //print("Data is not null");
-        Utils().setModelData(d);
+        Utils().setModelData(d, null);
         name = Userr.userData.name.toString();
         email = Userr.userData.email.toString();
         postalCode = Userr.userData.postalCode;

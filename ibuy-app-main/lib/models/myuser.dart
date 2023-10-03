@@ -17,4 +17,5 @@ class Userr {
   List cards = [];
   String? end = "";
   String? start = "";
+  String? retailer = "";
 }

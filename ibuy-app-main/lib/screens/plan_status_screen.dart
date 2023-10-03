@@ -75,6 +75,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   }
 
   void getPlansList() async {
+    await Utils().getDataFromDB(FirebaseAuth.instance.currentUser!.uid);
     await FirebaseFirestore.instance.collection('plans').get().then((value) {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
       if (dat.isNotEmpty) {
@@ -85,13 +86,12 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
         getPlanWithId();
       }
     });
+    budget = Userr.userData.budget;
+    print("User plan ID:" + Userr.userData.planId);
   }
 
   @override
   void initState() {
-    budget = Userr.userData.budget;
-    Utils().getDataFromDB(FirebaseAuth.instance.currentUser!.uid);
-    print("User plan ID:" + Userr.userData.planId);
     getPlansList();
     getReceipts();
 
@@ -158,7 +158,6 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
       onDrawerChanged: (isOpened) {
         if (!isOpened) {
           setState(() {
-            Utils().getDataFromDB(FirebaseAuth.instance.currentUser!.uid);
             print("User plan ID:" + Userr.userData.planId);
             getPlansList();
             getReceipts();
@@ -227,10 +226,12 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                     padding: const EdgeInsets.all(15.0),
                                     child: Column(
                                       children: [
-                                        const Padding(
+                                        Padding(
                                           padding: EdgeInsets.only(bottom: 10),
                                           child: Text(
-                                            "Spent",
+                                            Userr.userData.retailer! +
+                                                " - " +
+                                                "Spent",
                                             style: TextStyle(
                                                 color: Color(0xff999999)),
                                           ),

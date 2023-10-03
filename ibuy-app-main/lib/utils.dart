@@ -121,7 +121,7 @@ class Utils {
     return posCode;
   }
 
-  void setModelData(Map dat) {
+  void setModelData(Map dat, Map? plandata) {
     //print(dat["cards"]);
     Userr.userData.uid = dat["uid"];
     Userr.userData.imgUrl = dat["img_url"];
@@ -135,13 +135,35 @@ class Utils {
     Userr.userData.planId = dat["plan_id"];
     Userr.userData.end = dat["endDate"];
     Userr.userData.start = dat["startDate"];
+    Userr.userData.retailer =
+        plandata == null ? "" : plandata!["retailer_name"];
   }
 
-  void getDataFromDB(String uid) {
-    FirebaseFirestore.instance.collection("User").doc(uid).get().then((e) {
+  Future<void> getDataFromDB(String uid) async {
+    await FirebaseFirestore.instance
+        .collection("User")
+        .doc(uid)
+        .get()
+        .then((e) async {
       Map<String, dynamic>? d = e.data();
       if (d != null) {
-        setModelData(d);
+        if (d["plan_id"].toString().isNotEmpty) {
+          await FirebaseFirestore.instance
+              .collection("plans")
+              .doc(d["plan_id"])
+              .get()
+              .then((value) async {
+            await FirebaseFirestore.instance
+                .collection("retailers")
+                .doc(value.data()!["createdBy"])
+                .get()
+                .then((value) {
+              setModelData(d, value.data() as Map<String, dynamic>);
+            });
+          });
+        } else {
+          setModelData(d, null);
+        }
       } else {
         //AppRoutes.replace(context, LoginClass());
       }
