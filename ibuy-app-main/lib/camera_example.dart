@@ -445,10 +445,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     FirebaseFirestore.instance.collection("receipts").doc().set({
       "receiptUrl": ReceiptUploadScreen.receiptUrl,
       "user_uid": FirebaseAuth.instance.currentUser?.uid,
-      "time": DateTime.now().toString(),
+      "time": DateTime.now().millisecondsSinceEpoch,
       "retailerName": "",
       "status": "Pending",
       "totalSpend": "",
+      "update_time": DateTime.now().millisecondsSinceEpoch,
       "trxDate": "",
       "last4Digits": "",
       "plan_id": Userr.userData.planId,

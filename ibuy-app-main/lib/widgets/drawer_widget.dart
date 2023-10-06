@@ -200,7 +200,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 const Text("Member Since - "),
                                 Text(
                                     DateFormat("dd/MM/yyyy").format(
-                                        DateTime.parse(
+                                        DateTime.fromMillisecondsSinceEpoch(
                                             Userr.userData.createdAt!)),
                                     style: greyStyle),
                               ],

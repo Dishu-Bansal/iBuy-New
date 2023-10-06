@@ -21,35 +21,85 @@ class _CashBackScreenState extends State<CashBackScreen> {
   double cashback = 0;
   double inProcessCashback = 0;
   bool loading = true;
-
+  bool ongoingPlan = false;
   double earnedCashback = 0;
-  void getReceipts() async {
+  double paidcashback = 0;
+  double processingcashback = 0;
+  double pendingcashback = 0;
+
+  void getCurrentSpend() async {
     spent = 0;
     print(Userr().uid);
     await FirebaseFirestore.instance
-        .collection('receipts')
+        .collection("User")
+        .doc(Userr().uid)
+        .get()
+        .then((value) => {ongoingPlan = value['plan_id'] == "" ? false : true});
+    if (ongoingPlan) {
+      await FirebaseFirestore.instance
+          .collection('receipts')
+          .where("user_uid", isEqualTo: Userr().uid.toString())
+          .where("status", isEqualTo: "approved")
+          .get()
+          .then((value) {
+        spent = 0;
+        for (var element in value.docs) {
+          if (element.data()["time"] >= Userr.userData.start &&
+              element.data()["time"] < Userr.userData.end) {
+            spent += int.parse(element.data()['totalSpend']);
+          }
+        }
+
+        /*if (spent > Userr.userData.budget) {
+            setState(() {
+              isEligible = true;
+            });
+          }*/
+      });
+    }
+  }
+
+  Future<void> getPaidCashback() async {
+    await FirebaseFirestore.instance
+        .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("status", isEqualTo: "approved")
+        .where("paid", isEqualTo: true)
         .get()
         .then((value) {
       for (var element in value.docs) {
-        spent += int.parse(element.data()['totalSpend']);
-        retailer = element.data()['retailerName'];
+        paidcashback += element.data()["amount"];
       }
+    });
+  }
 
-      print("spent: " + spent.toString());
-      print("budget: " + Userr.userData.budget.toString());
+  Future<void> getProcessingCashback() async {
+    await FirebaseFirestore.instance
+        .collection('cashbacks')
+        .where("user_uid", isEqualTo: Userr().uid.toString())
+        .where("paid", isEqualTo: false)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        processingcashback += element.data()["amount"];
+      }
+    });
+  }
 
-      if (spent > Userr.userData.budget) {
-        setState(() {
-          isEligible = true;
-        });
+  Future<void> getPendingCashback() async {
+    await FirebaseFirestore.instance
+        .collection('cashbacks')
+        .where("user_uid", isEqualTo: Userr().uid.toString())
+        .where("paid", isEqualTo: null)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        pendingcashback += element.data()["amount"];
       }
     });
   }
 
   //get the total earned cashback till date
-  void getTotalEarnedCashback() async {
+  /*void getTotalEarnedCashback() async {
     await FirebaseFirestore.instance
         .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
@@ -69,22 +119,22 @@ class _CashBackScreenState extends State<CashBackScreen> {
       print("earnedCashback: " + earnedCashback.toString());
       print("inProcess: " + inProcessCashback.toString());
     });
-  }
+  }*/
 
   void requestCashback() async {
     await FirebaseFirestore.instance.collection('cashbacks').add({
       "user_uid": Userr().uid,
-      "amount": cashback / 100 * Userr.userData.budget,
+      "amount": pendingcashback,
       "paid": false,
       "retailer": retailer,
-      "date": DateTime.now().toString()
+      "date": DateTime.now().toString(),
     }).then((value) {
       setState(() {
         getPlanDetails();
-        getReceipts();
+        /*getReceipts();
         getTotalEarnedCashback();
         checkIfAlreadyRequested();
-        checkIfCashbackPaid();
+        checkIfCashbackPaid();*/
       });
       //display success message with snackbar
       return ScaffoldMessenger.of(context).showSnackBar(
@@ -96,7 +146,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
   }
 
   //a function that will check if a user has alraedy requested for cashback
-  void checkIfAlreadyRequested() async {
+  /*void checkIfAlreadyRequested() async {
     await FirebaseFirestore.instance
         .collection('cashbacks')
         .where("user_uid", isEqualTo: Userr().uid.toString())
@@ -130,7 +180,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
         loading = false;
       });
     });
-  }
+  }*/
 
   void getPlanDetails() async {
     cashback = 0;
@@ -152,10 +202,14 @@ class _CashBackScreenState extends State<CashBackScreen> {
   @override
   void initState() {
     getPlanDetails();
-    getReceipts();
+    getCurrentSpend();
+    getPaidCashback();
+    getPendingCashback();
+    getProcessingCashback();
+    /*getReceipts();
     getTotalEarnedCashback();
     checkIfAlreadyRequested();
-    checkIfCashbackPaid();
+    checkIfCashbackPaid();*/
     super.initState();
   }
 
@@ -225,7 +279,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$${(cashback / 100 * Userr.userData.budget).toStringAsFixed(2)}",
+                                    "\$${(paidcashback + pendingcashback + processingcashback + (cashback / 100 * spent)).toStringAsFixed(2)}",
                                     style: const TextStyle(
                                       color: Color(0xff3DBB85),
                                       fontSize: 20,
@@ -247,7 +301,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$$redemedCashback",
+                                    "\$$paidcashback",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )
@@ -266,9 +320,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    !casbackPaid
-                                        ? "\$${inProcessCashback.toStringAsFixed(2)}"
-                                        : "\$0",
+                                    "\$${processingcashback.toStringAsFixed(2)}",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )
@@ -287,7 +339,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$$redemableCashback",
+                                    "\$$pendingcashback",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )
