@@ -202,12 +202,13 @@ class _ReceiptUploadScreenState extends State<ReceiptUploadScreen> {
     FirebaseFirestore.instance.collection("receipts").doc().set({
       "receiptUrl": ReceiptUploadScreen.receiptUrl,
       "user_uid": FirebaseAuth.instance.currentUser?.uid,
-      "time": DateTime.now().toString(),
+      "time": DateTime.now().millisecondsSinceEpoch,
       "retailerName": "",
       "status": "",
       "totalSpend": "",
       "trxDate": "",
       "last4Digits": "",
+      "update_time": DateTime.now().millisecondsSinceEpoch,
       "plan_id": Userr.userData.planId,
     }).then((value) {
       //Display a snackbar with success message

@@ -47,8 +47,8 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
                     .doc(Userr.userData.uid)
                     .update({
                   "plan_id": "",
-                  "startDate": "",
-                  "endDate": "",
+                  "startDate": 0,
+                  "endDate": 0,
                 });
                 await FirebaseFirestore.instance
                     .collection("User")

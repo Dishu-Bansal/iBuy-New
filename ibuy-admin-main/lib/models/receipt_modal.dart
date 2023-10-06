@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReceiptModal {
   String? imageUrl;
-  String? time;
+  int? time;
   String? userId;
   String? status;
   String? id;
@@ -11,6 +11,7 @@ class ReceiptModal {
   String? totalSpend;
   String? last4digits;
   String? planId;
+  int? updateTime;
 
   ReceiptModal({
     this.imageUrl,
@@ -22,6 +23,7 @@ class ReceiptModal {
     this.totalSpend,
     this.trxDate,
     this.planId,
+    this.updateTime,
   });
 
   ReceiptModal.fromMap(DocumentSnapshot map) {
@@ -35,5 +37,6 @@ class ReceiptModal {
     totalSpend = map['totalSpend'];
     last4digits = map['last4Digits'];
     planId = map['plan_id'];
+    updateTime = map['update_time'];
   }
 }

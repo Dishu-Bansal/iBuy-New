@@ -57,7 +57,7 @@ class ReceiptController extends GetxController {
       'trxDate': trxDate.text,
       'totalSpend': totalSpend.text,
       'last4Digits': last4Digits.text,
-      'time': DateTime.now().toString(),
+      'update_time': DateTime.now().millisecondsSinceEpoch,
     }).then((value) {
       Get.snackbar(
         "Receipt Approved",
@@ -80,8 +80,10 @@ class ReceiptController extends GetxController {
     FirebaseFirestore.instance
         .collection('receipts')
         .doc(pendingReceipts[index].id)
-        .update({'status': "rejected", 'time': DateTime.now().toString()}).then(
-            (value) {
+        .update({
+      'status': "rejected",
+      'update_time': DateTime.now().millisecondsSinceEpoch,
+    }).then((value) {
       Get.snackbar(
         "Receipt Rejected",
         "Receipt has been Rejected",
@@ -108,8 +110,10 @@ class ReceiptController extends GetxController {
     FirebaseFirestore.instance
         .collection('receipts')
         .doc(pendingReceipts[index].id)
-        .update({'status': 'reupload', 'time': DateTime.now().toString()}).then(
-            (value) {
+        .update({
+      'status': 'reupload',
+      'update_time': DateTime.now().millisecondsSinceEpoch,
+    }).then((value) {
       Get.snackbar(
         "Receipt Status",
         "Changes Saved",
