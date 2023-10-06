@@ -11,6 +11,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../locate.dart';
+import '../models/myuser.dart';
+import '../utils.dart';
 import '../widgets/plan_card.dart';
 
 class MyStore {
@@ -227,7 +229,7 @@ class _PlanScreenState extends State<PlanScreen> {
     );
   }
 
-  void _savePlan(String id, String end) {
+  Future<void> _savePlan(String id, String end) async {
     setState(() {
       isLoading = true;
     });
@@ -273,16 +275,17 @@ class _PlanScreenState extends State<PlanScreen> {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update({
             "plan_id": id,
-            "endDate": DateFormat("dd/MM/yyyy")
-                .format(DateTime.now().add(Duration(days: 28))),
-            "startDate": DateFormat("dd/MM/yyyy").format(DateTime.now()),
+            "endDate":
+                DateTime.now().add(Duration(days: 28)).millisecondsSinceEpoch,
+            "startDate": DateTime.now().millisecondsSinceEpoch,
           })
-          .then((value) => {
+          .then((value) async => {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Plan added successfully"),
                   ),
                 ),
+                await Utils().getDataFromDB(Userr.userData.uid!),
                 AppRoutes.push(context, const PlanStatusScreen()),
               })
           .catchError((onError) => {

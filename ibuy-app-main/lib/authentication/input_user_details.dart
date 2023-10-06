@@ -217,14 +217,14 @@ class _InputUserDetailsState extends State<InputUserDetails> {
       "img_url": InputUserDetails.imgUrl,
       "email": widget.email,
       "name": nameController.text.toString().trim(),
-      "createdAt": DateTime.now().toString(),
+      "createdAt": DateTime.now().millisecondsSinceEpoch,
       "mailing_address": "Not Setup yet",
       "budget": 0,
       "postalCode": 0,
       "plan_id": "",
       "cards": [],
-      "endDate": "",
-      "startDate": "",
+      "endDate": 0,
+      "startDate": 0,
     };
     await FirebaseFirestore.instance
         .collection("User")

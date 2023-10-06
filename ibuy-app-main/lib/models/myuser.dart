@@ -12,10 +12,10 @@ class Userr {
   String? mailingAddress = "";
   String postalCode = "";
   double budget = 0;
-  String? createdAt = "";
+  int? createdAt = 0;
   String planId = "";
   List cards = [];
-  String? end = "";
-  String? start = "";
+  int? end = 0;
+  int? start = 0;
   String? retailer = "";
 }

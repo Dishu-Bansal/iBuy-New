@@ -2,7 +2,6 @@ import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/myuser.dart';
 import '../utils.dart';
@@ -27,7 +26,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
 
   var isLoading = true;
-  void getReceipts() async {
+  Future<void> getReceipts() async {
     spent = 0;
     try {
       print("User ID in plan status screen: " + Userr().uid.toString());
@@ -39,8 +38,12 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
           .where("plan_id", isEqualTo: Userr().planId)
           .get()
           .then((value) async {
+        spent = 0;
         for (var element in value.docs) {
-          spent += int.parse(element.data()['totalSpend']);
+          if (element.data()["time"] >= Userr.userData.start &&
+              element.data()["time"] < Userr.userData.end) {
+            spent += int.parse(element.data()['totalSpend']);
+          }
         }
 
         print("spent: " + spent.toString());
@@ -52,8 +55,8 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
               .doc(Userr.userData.uid)
               .update({
             "plan_id": "",
-            "startDate": "",
-            "endDate": "",
+            "startDate": 0,
+            "endDate": 0,
           });
           await FirebaseFirestore.instance
               .collection("User")
@@ -65,7 +68,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
             "status": "Completed",
           });
         }
-        setState(() async {
+        setState(() {
           isLoading = false;
         });
       });
@@ -82,10 +85,9 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
         setState(() {
           plansList = dat;
         });
-
-        getPlanWithId();
       }
     });
+    await getPlanWithId();
     budget = Userr.userData.budget;
     print("User plan ID:" + Userr.userData.planId);
   }
@@ -93,12 +95,11 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   @override
   void initState() {
     getPlansList();
-    getReceipts();
 
     super.initState();
   }
 
-  void getPlanWithId() async {
+  Future<void> getPlanWithId() async {
     // print("in plan with id");
 
     String idd = Userr.userData.planId;
@@ -109,9 +110,8 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
         .get()
         .then((value) async {
       //setState(() {
-      idd = value.data()!['plan_id'];
-      if (DateFormat("dd/MM/yyyy")
-              .parse(value.data()!['endDate'])
+      idd = await value.data()!['plan_id'];
+      if (DateTime.fromMillisecondsSinceEpoch(value.data()!['endDate'])
               .compareTo(DateTime.now()) ==
           -1) {
         endDateReached = true;
@@ -122,8 +122,8 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
             .doc(Userr.userData.uid)
             .update({
           "plan_id": "",
-          "startDate": "",
-          "endDate": "",
+          "startDate": 0,
+          "endDate": 0,
         });
         await FirebaseFirestore.instance
             .collection("User")
@@ -137,7 +137,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
       }
       debugPrint("idd: $idd");
       //debugPrint("plansList.length ${plansList.length}");
-
+      await getReceipts();
       for (int i = 0; i < plansList.length; i++) {
         //print(plansList[i]['plan_id']);
         if (plansList[i].id == idd) {
@@ -366,10 +366,10 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                               backgroundColor: endDateReached
                                                   ? Colors.redAccent
                                                   : const Color(0xffE8E8E8),
-                                              value: ((DateFormat("dd/MM/yyyy")
-                                                              .parse(Userr
-                                                                  .userData
-                                                                  .end!)
+                                              value:
+                                                  ((DateTime.fromMillisecondsSinceEpoch(
+                                                                  Userr.userData
+                                                                      .end!)
                                                               .add(Duration(
                                                                   days: 1))
                                                               .difference(
@@ -407,8 +407,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                           children: [
                                                             AnimatedCount(
                                                               fractionDigits: 0,
-                                                              count: ((DateFormat("dd/MM/yyyy")
-                                                                              .parse(Userr.userData.end!)
+                                                              count: ((DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!)
                                                                               .add(Duration(days: 1))
                                                                               .difference(DateTime.now()))
                                                                           .inDays /
@@ -442,10 +441,11 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                                   Text(
                                                     planCompleted
                                                         ? ""
-                                                        : DateFormat(
-                                                                "dd/MM/yyyy")
-                                                            .parse(Userr
-                                                                .userData.end!)
+                                                        : DateTime
+                                                                .fromMillisecondsSinceEpoch(
+                                                                    Userr
+                                                                        .userData
+                                                                        .end!)
                                                             .add(Duration(
                                                                 days: 1))
                                                             .difference(
