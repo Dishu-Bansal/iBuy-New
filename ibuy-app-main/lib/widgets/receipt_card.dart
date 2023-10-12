@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ReceiptCard extends StatelessWidget {
   final String retailer;
   final String spend;
-  final String date;
+  final int date;
   final String status;
   const ReceiptCard(
       {super.key,
@@ -15,8 +15,9 @@ class ReceiptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //calculate the date difference between today and the date of the receipt
-    final dateDifference =
-        DateTime.now().difference(DateTime.parse(date)).inDays;
+    final dateDifference = DateTime.now()
+        .difference(DateTime.fromMillisecondsSinceEpoch(date))
+        .inDays;
 
     return Padding(
         padding: spend.isNotEmpty
