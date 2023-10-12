@@ -60,9 +60,6 @@ class CashbackScreen extends StatelessWidget {
                           size: ColumnSize.L,
                         ),
                         DataColumn(
-                          label: Text('Retailer'),
-                        ),
-                        DataColumn(
                           label: Text('Cashback Requested'),
                         ),
                         DataColumn(

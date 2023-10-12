@@ -2,26 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CashbackModal {
   double? amount;
-  String? date;
-  bool? status;
-  String? retailer;
+  String? status;
   String? uid;
   String? id;
 
   CashbackModal({
     this.amount,
-    this.date,
     this.status,
-    this.retailer,
     this.uid,
+    this.id,
   });
 
   CashbackModal.fromMap(DocumentSnapshot map) {
     amount = map['amount'];
-    date = map['date'];
-    status = map['paid'];
-    retailer = map['retailer'];
-    uid = map['user_uid'];
+    status = map['status'];
+    uid = map['uid'];
     id = map.id;
   }
 }

@@ -15,7 +15,7 @@ class CashbackController extends GetxController {
     checked.clear();
     try {
       var snapshot =
-          await FirebaseFirestore.instance.collection("cashbacks").get();
+          await FirebaseFirestore.instance.collection("cashback").get();
       for (var element in snapshot.docs) {
         cashbacks.add(CashbackModal.fromMap(element));
         checked.add(false);
@@ -28,9 +28,9 @@ class CashbackController extends GetxController {
   void pay() {
     for (var element in checkedAccounts) {
       FirebaseFirestore.instance
-          .collection("cashbacks")
+          .collection("cashback")
           .doc(element)
-          .update({"paid": true});
+          .update({"status": "paid"});
     }
 
     getCashbacks().then((value) {

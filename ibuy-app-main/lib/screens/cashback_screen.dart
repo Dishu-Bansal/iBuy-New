@@ -2,6 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/models/myuser.dart';
 
+class Cashback {
+  String? uid = "";
+  String? status = "";
+  double? amount = 0;
+  String? id = "";
+
+  Cashback(this.id, this.uid, this.status, this.amount);
+}
+
 class CashBackScreen extends StatefulWidget {
   const CashBackScreen({super.key});
 
@@ -26,196 +35,71 @@ class _CashBackScreenState extends State<CashBackScreen> {
   double paidcashback = 0;
   double processingcashback = 0;
   double pendingcashback = 0;
+  List<Cashback> cashbacks = List.empty(growable: true);
 
-  void getCurrentSpend() async {
-    spent = 0;
-    print(Userr().uid);
-    await FirebaseFirestore.instance
-        .collection("User")
-        .doc(Userr().uid)
-        .get()
-        .then((value) => {ongoingPlan = value['plan_id'] == "" ? false : true});
-    if (ongoingPlan) {
-      await FirebaseFirestore.instance
-          .collection('receipts')
-          .where("user_uid", isEqualTo: Userr().uid.toString())
-          .where("status", isEqualTo: "approved")
-          .get()
-          .then((value) {
-        spent = 0;
-        for (var element in value.docs) {
-          if (element.data()["time"] >= Userr.userData.start &&
-              element.data()["time"] < Userr.userData.end) {
-            spent += int.parse(element.data()['totalSpend']);
-          }
-        }
-
-        /*if (spent > Userr.userData.budget) {
-            setState(() {
-              isEligible = true;
-            });
-          }*/
-      });
+  void requestCashback() async {
+    for (Cashback i in cashbacks) {
+      if (i.status == "eligible") {
+        await FirebaseFirestore.instance
+            .collection('cashback')
+            .doc(i.id)
+            .update({
+          "status": "processing",
+        }).then((value) {
+          setState(() {});
+          //display success message with snackbar
+          return ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Cashback requested successfully"),
+            ),
+          );
+        });
+      }
     }
   }
 
-  Future<void> getPaidCashback() async {
+  getCashback() async {
     await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("paid", isEqualTo: true)
+        .collection("cashback")
+        .where("uid", isEqualTo: Userr.userData.uid)
         .get()
         .then((value) {
-      for (var element in value.docs) {
-        paidcashback += element.data()["amount"];
+      cashbacks.clear();
+      for (DocumentSnapshot current in value.docs) {
+        cashbacks.add(Cashback(
+            current.id, current["uid"], current["status"], current["amount"]));
       }
-    });
-  }
-
-  Future<void> getProcessingCashback() async {
-    await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("paid", isEqualTo: false)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        processingcashback += element.data()["amount"];
-      }
-    });
-  }
-
-  Future<void> getPendingCashback() async {
-    await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("paid", isEqualTo: null)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        pendingcashback += element.data()["amount"];
-      }
-    });
-  }
-
-  //get the total earned cashback till date
-  /*void getTotalEarnedCashback() async {
-    await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        if (element.data()['paid'] == false) {
-          //the cashback which is requested but not paid yet
-          inProcessCashback += element.data()['amount'];
-        } else {
-          earnedCashback += element.data()['amount'];
-          redemedCashback += element.data()['amount'];
-          redemableCashback = spent - redemedCashback;
+      paidcashback = 0;
+      pendingcashback = 0;
+      processingcashback = 0;
+      earnedCashback = 0;
+      for (Cashback i in cashbacks) {
+        if (i.status == "eligible") {
+          pendingcashback += (i.amount as double);
+        } else if (i.status == "processing") {
+          processingcashback += (i.amount as double);
+        } else if (i.status == "paid") {
+          paidcashback += (i.amount as double);
         }
-      }
 
-      print("earnedCashback: " + earnedCashback.toString());
-      print("inProcess: " + inProcessCashback.toString());
-    });
-  }*/
-
-  void requestCashback() async {
-    await FirebaseFirestore.instance.collection('cashbacks').add({
-      "user_uid": Userr().uid,
-      "amount": pendingcashback,
-      "paid": false,
-      "retailer": retailer,
-      "date": DateTime.now().toString(),
-    }).then((value) {
-      setState(() {
-        getPlanDetails();
-        /*getReceipts();
-        getTotalEarnedCashback();
-        checkIfAlreadyRequested();
-        checkIfCashbackPaid();*/
-      });
-      //display success message with snackbar
-      return ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Cashback requested successfully"),
-        ),
-      );
-    });
-  }
-
-  //a function that will check if a user has alraedy requested for cashback
-  /*void checkIfAlreadyRequested() async {
-    await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("paid", isEqualTo: false)
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        //if the user has already requested for cashback
-        setState(() {
-          alreadyApplied = true;
-        });
+        earnedCashback = paidcashback + pendingcashback + processingcashback;
       }
     });
-  }
 
-  //a funtion that will check if the cashback is paid or not
-  void checkIfCashbackPaid() async {
-    await FirebaseFirestore.instance
-        .collection('cashbacks')
-        .where("user_uid", isEqualTo: Userr().uid.toString())
-        .where("paid", isEqualTo: true)
-        .get()
-        .then((value) {
-      if (value.docs.isNotEmpty) {
-        //if the user has already requested for cashback
-        setState(() {
-          casbackPaid = true;
-        });
-      }
-      setState(() {
-        loading = false;
-      });
-    });
-  }*/
-
-  void getPlanDetails() async {
-    cashback = 0;
-    await FirebaseFirestore.instance
-        .collection('plans')
-        .doc(Userr().planId.toString())
-        .get()
-        .then((value) {
-      requiredSpend = value.data()!['required_spend'];
-      cashback = double.parse(value.data()!['cashback'].toString());
-      retailer = value.data()!['company'];
-      print("cashback" + cashback.toString());
-      print("required spend:" + requiredSpend.toString());
-
-      setState(() {});
+    setState(() {
+      loading = false;
     });
   }
 
   @override
   void initState() {
-    getPlanDetails();
-    getCurrentSpend();
-    getPaidCashback();
-    getPendingCashback();
-    getProcessingCashback();
-    /*getReceipts();
-    getTotalEarnedCashback();
-    checkIfAlreadyRequested();
-    checkIfCashbackPaid();*/
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     //spent = 0;
+    getCashback();
     return Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -279,7 +163,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$${(paidcashback + pendingcashback + processingcashback + (cashback / 100 * spent)).toStringAsFixed(2)}",
+                                    "\$${earnedCashback}",
                                     style: const TextStyle(
                                       color: Color(0xff3DBB85),
                                       fontSize: 20,
@@ -353,26 +237,15 @@ class _CashBackScreenState extends State<CashBackScreen> {
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: Center(
-                        child: spent >= Userr.userData.budget
-                            ? !alreadyApplied
-                                ? const Text(
-                                    "Congratulations!",
-                                    style: TextStyle(
-                                      color: Color(0xff3DBB85),
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : Text(
-                                    !casbackPaid
-                                        ? "Cashback already requested!"
-                                        : "Cashback Approved!",
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 29, 30, 30),
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
+                        child: pendingcashback >= 10
+                            ? const Text(
+                                "Congratulations!",
+                                style: TextStyle(
+                                  color: Color(0xff3DBB85),
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
                             : const Text(
                                 "No Cashback Yet!",
                                 style: TextStyle(
@@ -383,28 +256,15 @@ class _CashBackScreenState extends State<CashBackScreen> {
                               ),
                       ),
                     ),
-                    spent >= Userr.userData.budget
-                        ? !casbackPaid
-                            ? Text(
-                                !alreadyApplied
-                                    ? "You are eligible for a free delivery of your cashback check!"
-                                    : "Please wait while we process your cashback request. You will be notified once your cashback is ready to be redeemed.",
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  color: Color(0xff000000),
-                                ),
-                              )
-                            : const Center(
-                                child: Text(
-                                  "Your cashback has been approved.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Color(0xff000000),
-                                  ),
-                                ),
-                              )
+                    pendingcashback >= 10
+                        ? const Text(
+                            "You are eligible for a free delivery of your cashback check!",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xff000000),
+                            ),
+                          )
                         : const Text(
                             "You will be eligible for cashback as soon as you have ${10} or more as Redeemable cashback. Keep at it!",
                             textAlign: TextAlign.center,
@@ -413,34 +273,31 @@ class _CashBackScreenState extends State<CashBackScreen> {
                               color: Color(0xff000000),
                             ),
                           ),
-                    spent >= Userr.userData.budget
-                        ? !alreadyApplied && !casbackPaid
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 50),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    requestCashback();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xffFEC107),
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    height: 50,
-                                    child: const Center(
-                                      child: Text(
-                                        "REQUEST CASHBACK!",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 16,
-                                            color: Colors.black),
-                                      ),
-                                    ),
+                    pendingcashback >= 10
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 50),
+                            child: GestureDetector(
+                              onTap: () {
+                                requestCashback();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffFEC107),
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                height: 50,
+                                child: const Center(
+                                  child: Text(
+                                    "REQUEST CASHBACK!",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 16,
+                                        color: Colors.black),
                                   ),
                                 ),
-                              )
-                            : const SizedBox()
+                              ),
+                            ),
+                          )
                         : const SizedBox(),
                     const Expanded(child: SizedBox()),
                     const Column(

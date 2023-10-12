@@ -38,17 +38,16 @@ class CashbackDatasource extends DataTableSource {
         ),
       ),
       DataCell(Text(cashbackController.cashbacks[index].uid.toString())),
-      DataCell(Text(cashbackController.cashbacks[index].retailer.toString())),
       DataCell(
           Text("\$${cashbackController.cashbacks[index].amount.toString()}")),
       DataCell(
         //if the status is "new", return a chip with purple background with text "new", if the status is "approved", return a chip with green background with text "approved" and if the status is "rejected", return a chip with red background with text "rejected"
-        cashbackController.cashbacks[index].status == null
+        cashbackController.cashbacks[index].status == "processing"
             ? const Chip(
-                label: Text("Working"),
+                label: Text("Waiting"),
               )
             : Obx(
-                () => cashbackController.cashbacks[index].status!
+                () => cashbackController.cashbacks[index].status == "paid"
                     ? const Chip(
                         backgroundColor: Color(0xff35BF84),
                         label: Text(
@@ -59,7 +58,7 @@ class CashbackDatasource extends DataTableSource {
                     : const Chip(
                         backgroundColor: Color(0xffE64141),
                         label: Text(
-                          "Unpaid",
+                          "Unclaimed",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
