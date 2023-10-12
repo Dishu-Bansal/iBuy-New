@@ -67,6 +67,11 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
             "budget": Userr.userData.budget,
             "status": "Completed",
           });
+          await FirebaseFirestore.instance.collection("cashback").add({
+            "amount": (Userr.userData.budget * Userr.userData.cashback) / 100,
+            "uid": Userr.userData.uid,
+            "status": "eligible",
+          });
         }
         setState(() {
           isLoading = false;

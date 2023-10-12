@@ -8,7 +8,7 @@ class ProcessReceiptScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final receiptController = Get.put(ReceiptController(), permanent: true);
+    final receiptController = Get.put(ReceiptController());
     final formKey = GlobalKey<FormState>();
     return Column(
       children: [

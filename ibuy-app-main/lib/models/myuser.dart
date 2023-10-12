@@ -18,4 +18,5 @@ class Userr {
   int? end = 0;
   int? start = 0;
   String? retailer = "";
+  double cashback = 0;
 }
