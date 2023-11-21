@@ -2,6 +2,7 @@ import 'package:circle_progress_bar/circle_progress_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/myuser.dart';
 import '../utils.dart';
@@ -22,6 +23,7 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
   var budget = 1.0;
   bool planCompleted = false;
   bool endDateReached = false;
+  bool processingReceipts = false;
 
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
 
@@ -34,15 +36,20 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
       await FirebaseFirestore.instance
           .collection('receipts')
           .where("user_uid", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .where("status", isEqualTo: "approved")
           .where("plan_id", isEqualTo: Userr().planId)
           .get()
           .then((value) async {
         spent = 0;
+        processingReceipts = false;
         for (var element in value.docs) {
-          if (element.data()["time"] >= Userr.userData.start &&
-              element.data()["time"] < Userr.userData.end) {
-            spent += int.parse(element.data()['totalSpend']);
+          if (element.data()["status"] == "approved") {
+            if (element.data()["time"] >= Userr.userData.start &&
+                element.data()["time"] < Userr.userData.end) {
+              spent += int.parse(element.data()['totalSpend']);
+            }
+          }
+          if (element.data()["status"] == "Pending") {
+            processingReceipts = true;
           }
         }
 
@@ -203,7 +210,14 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                   : (planCompleted
                                       ? const Text(
                                           "Congratulations! You've completed the plan.")
-                                      : const Text("You're almost here!!!"))),
+                                      : (processingReceipts
+                                          ? Text(
+                                              "We are processing your receipts. Keep scanning more receipts to reach your spend level by ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))}")
+                                          : (spent == 0
+                                              ? Text(
+                                                  "Congratulations for your new plan with ${Userr.userData.retailer!} \n Shop at ${Userr.userData.retailer!} and start earning \n spend \$\$ before ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))} to earn you cashback.")
+                                              : Text(
+                                                  "You are progressing well. Keep scanning more receipts to reach your spend level by ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))}"))))),
                         ),
                       ],
                     ),

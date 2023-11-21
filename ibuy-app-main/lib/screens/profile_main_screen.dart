@@ -230,10 +230,14 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                                       CupertinoPageRoute(
                                           builder: (contect) =>
                                               const AddCardDetails()))
-                                  .then((value) => setState(() {
-                                        print("card" + value.toString());
-                                        cardDetails.add(value);
-                                      })),
+                                  .then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    print("card" + value.toString());
+                                    cardDetails.add(value);
+                                  });
+                                }
+                              }),
                               style: const ButtonStyle(
                                 backgroundColor:
                                     MaterialStatePropertyAll(Color(0xff3DBB85)),
@@ -303,8 +307,10 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: List.generate(cardDetails.length,
-                              (index) => Text(cardDetails[index])),
+                          children: cardDetails == null
+                              ? List.empty()
+                              : List.generate(cardDetails.length,
+                                  (index) => Text(cardDetails[index])),
                         ),
                       ],
                     ),

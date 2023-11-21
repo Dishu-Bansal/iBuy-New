@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/models/myuser.dart';
 import 'package:freelance_ibuy_app/widgets/receipt_card.dart';
@@ -35,6 +34,7 @@ class _RecieptsScreenState extends State<RecieptsScreen> {
         .then((value) {
       print(value.docs);
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
+      dat.sort((a, b) => b["update_time"] - a["update_time"]);
       if (dat.isNotEmpty) {
         setState(() {
           receipts = dat;
@@ -86,7 +86,7 @@ class _RecieptsScreenState extends State<RecieptsScreen> {
                         return ReceiptCard(
                           retailer: receipts[index]["retailerName"],
                           spend: receipts[index]["totalSpend"],
-                          date: receipts[index]["time"],
+                          date: receipts[index]["update_time"],
                           status: receipts[index]["status"],
                         );
                       },

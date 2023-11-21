@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibuy_app_retailer_web/constants.dart';
 import 'package:ibuy_app_retailer_web/models/plan_modal.dart';
 import 'package:ibuy_app_retailer_web/models/store_modal.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
@@ -84,7 +85,7 @@ class PlanController extends GetxController {
     await FirebaseFirestore.instance.collection("plans").add({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
-      "company": storeNameCon.text,
+      "company": retailer_name,
       "required_spend": double.parse(minSpendCon.text),
       "maxSpend": double.parse(maxSpendCon.text),
       "maxCustomers": int.parse(maxCustomersCon.text),
@@ -190,7 +191,7 @@ class PlanController extends GetxController {
     FirebaseFirestore.instance.collection("plans").doc(checkedPlans[0]).update({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
-      "company": storeNameCon.text,
+      "company": retailer_name,
       "required_spend": double.parse(minSpendCon.text),
       "maxSpend": double.parse(maxSpendCon.text),
       "maxCustomers": int.parse(maxCustomersCon.text),

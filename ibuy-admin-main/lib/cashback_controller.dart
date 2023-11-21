@@ -17,8 +17,17 @@ class CashbackController extends GetxController {
       var snapshot =
           await FirebaseFirestore.instance.collection("cashback").get();
       for (var element in snapshot.docs) {
-        cashbacks.add(CashbackModal.fromMap(element));
-        checked.add(false);
+        if (cashbacks.any((ele) =>
+            ele.uid == element["uid"] && ele.status == element["status"])) {
+          int index = cashbacks.indexWhere(
+              (e) => e.uid == element["uid"] && e.status == element["status"]);
+          CashbackModal c = cashbacks.elementAt(index);
+          c.amount = element["amount"];
+          cashbacks[index] = c;
+        } else {
+          cashbacks.add(CashbackModal.fromMap(element));
+          checked.add(false);
+        }
       }
     } catch (e) {
       print("Error: $e");

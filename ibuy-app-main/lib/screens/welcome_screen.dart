@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/authentication/create_account_screen.dart';
+import 'package:freelance_ibuy_app/authentication/login_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -76,8 +77,7 @@ class WelcomeScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: InkWell(
-                  onTap: () =>
-                      AppRoutes.push(context, const CreateAccountScreen()),
+                  onTap: () => AppRoutes.push(context, const LoginScreen()),
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.white,

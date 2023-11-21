@@ -32,8 +32,8 @@ class LoginController extends GetxController {
               duration: Duration(seconds: 15));
           Get.offAll(() => const HomePage());
         } else {
-          Get.snackbar("Error",
-              "Account has not been approved yet. Please contact the administrator",
+          Get.snackbar("Approval Pending",
+              "Your account is pending for approval by iBuy Admin. It may take up to 24 hours before your account is activated. Please contact xxx@ibuy.com in case you have any questions.",
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.red,
               colorText: Colors.white,

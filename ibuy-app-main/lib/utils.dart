@@ -123,21 +123,22 @@ class Utils {
 
   void setModelData(Map dat, Map? retailerdata, Map? plandata) {
     //print(dat["cards"]);
-    Userr.userData.uid = dat["uid"];
-    Userr.userData.imgUrl = dat["img_url"];
-    Userr.userData.email = dat["email"];
-    Userr.userData.name = dat["name"];
+    Userr.userData.uid = dat["uid"] as String;
+    Userr.userData.imgUrl = dat["img_url"] as String;
+    Userr.userData.email = dat["email"] as String;
+    Userr.userData.name = dat["name"] as String;
     Userr.userData.postalCode = dat["postalCode"].toString();
-    Userr.userData.mailingAddress = dat["mailing_address"];
+    Userr.userData.mailingAddress = dat["mailing_address"].toString();
     Userr.userData.cards = [...dat["cards"]];
-    Userr.userData.budget = dat["budget"];
-    Userr.userData.createdAt = dat["createdAt"];
-    Userr.userData.planId = dat["plan_id"];
-    Userr.userData.end = dat["endDate"];
-    Userr.userData.start = dat["startDate"];
+    Userr.userData.budget = dat["budget"] as double;
+    Userr.userData.createdAt = dat["createdAt"] as int;
+    Userr.userData.planId = dat["plan_id"] as String;
+    Userr.userData.end = dat["endDate"] as int;
+    Userr.userData.start = dat["startDate"] as int;
     Userr.userData.retailer =
-        retailerdata == null ? "" : retailerdata!["retailer_name"];
-    Userr.userData.cashback = plandata == null ? 0 : plandata!["cashback"];
+        (retailerdata == null ? "" : retailerdata!["retailer_name"]) as String;
+    Userr.userData.cashback =
+        plandata == null ? 0 : double.parse(plandata!["cashback"].toString());
   }
 
   Future<void> getDataFromDB(String uid) async {

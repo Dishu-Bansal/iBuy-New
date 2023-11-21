@@ -27,6 +27,7 @@ class ReceiptController extends GetxController {
       for (var element in snapshot.docs) {
         receiptModals.add(ReceiptModal.fromMap(element));
       }
+      receiptModals.sort((a, b) => b.updateTime!.compareTo(a.updateTime!));
     } catch (e) {
       print("Error: $e");
     }

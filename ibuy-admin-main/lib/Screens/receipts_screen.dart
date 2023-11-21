@@ -69,7 +69,7 @@ class ReceiptsScreen extends StatelessWidget {
                           label: Text('Spend Amount'),
                         ),
                         DataColumn(
-                          label: Text('Submission Date'),
+                          label: Text('Last Update'),
                         ),
                         DataColumn(
                           label: Text('Status'),

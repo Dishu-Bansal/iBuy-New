@@ -72,7 +72,7 @@ class RetailersPlansScreen extends StatelessWidget {
                                 label: Text('Plan ID'),
                               ),
                               DataColumn2(
-                                label: Text('Retailer ID'),
+                                label: Text('Retailer'),
                               ),
                               DataColumn2(
                                 label: Text('Start Date'),

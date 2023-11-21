@@ -291,8 +291,8 @@ class _PlanScreenState extends State<PlanScreen> {
           .catchError((onError) => {
                 //Display a snack bar with error message
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Error adding plan"),
+                  SnackBar(
+                    content: Text("Error adding plan: " + onError.toString()),
                   ),
                 )
               });

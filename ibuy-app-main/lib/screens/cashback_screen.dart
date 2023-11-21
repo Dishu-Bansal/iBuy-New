@@ -163,7 +163,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$${earnedCashback}",
+                                    "\$${earnedCashback.toStringAsFixed(2)}",
                                     style: const TextStyle(
                                       color: Color(0xff3DBB85),
                                       fontSize: 20,
@@ -185,7 +185,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$$paidcashback",
+                                    "\$${paidcashback.toStringAsFixed(2)}",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )
@@ -223,7 +223,7 @@ class _CashBackScreenState extends State<CashBackScreen> {
                                     style: TextStyle(color: Color(0xff999999)),
                                   ),
                                   Text(
-                                    "\$$pendingcashback",
+                                    "\$${pendingcashback.toStringAsFixed(2)}",
                                     style: const TextStyle(
                                         color: Color(0xff292D32)),
                                   )

@@ -25,82 +25,6 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
         widget.isPlanCompleted || widget.anyPlan
             ? const SizedBox()
             : Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
-                  "Don't like this plan?",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-              ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          child: InkWell(
-            child: InkWell(
-              onTap: () async {
-                await FirebaseFirestore.instance
-                    .collection("User")
-                    .doc(Userr.userData.uid)
-                    .update({
-                  "plan_id": "",
-                  "startDate": 0,
-                  "endDate": 0,
-                });
-                await FirebaseFirestore.instance
-                    .collection("User")
-                    .doc(Userr.userData.uid)
-                    .collection("plan_history")
-                    .add({
-                  "plan_id": Userr.userData.planId,
-                  "budget": 0,
-                  "status": "Cancelled",
-                });
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (_) => GroceryBudgetScreen(true)));
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: const Color(0xffFFFFFF),
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: Colors.black,
-                    )),
-                width: MediaQuery.of(context).size.width,
-                height: 50,
-                child: Center(
-                  child: widget.isPlanCompleted || widget.anyPlan
-                      ? const Text("Create a new Plan",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 14))
-                      : const Text(
-                          "CANCEL AND CREATE NEW",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 14),
-                        ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        widget.isPlanCompleted || widget.anyPlan
-            ? const SizedBox()
-            : Center(
-                child: GestureDetector(
-                  child: const Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text(
-                      "Or",
-                    ),
-                  ),
-                ),
-              ),
-        widget.isPlanCompleted || widget.anyPlan
-            ? const SizedBox()
-            : Padding(
                 padding: const EdgeInsets.only(left: 0, right: 0, bottom: 0),
                 child: InkWell(
                   child: InkWell(
@@ -133,6 +57,129 @@ class _ReceiptWidgetState extends State<ReceiptWidget> {
                   ),
                 ),
               ),
+        widget.isPlanCompleted || widget.anyPlan
+            ? const SizedBox()
+            : Center(
+                child: GestureDetector(
+                  child: const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Text(
+                      "Or",
+                    ),
+                  ),
+                ),
+              ),
+        widget.isPlanCompleted || widget.anyPlan
+            ? const SizedBox()
+            : Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Text(
+                  "Don't like this plan?",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+              ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          child: InkWell(
+            child: InkWell(
+              onTap: () async {
+                if (!(widget.isPlanCompleted || widget.anyPlan)) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Cancelling plan"),
+                          content:
+                              Text("Are you sure you want to cancel the plan?"),
+                          actions: [
+                            MaterialButton(
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection("User")
+                                    .doc(Userr.userData.uid)
+                                    .update({
+                                  "plan_id": "",
+                                  "startDate": 0,
+                                  "endDate": 0,
+                                });
+                                await FirebaseFirestore.instance
+                                    .collection("User")
+                                    .doc(Userr.userData.uid)
+                                    .collection("plan_history")
+                                    .add({
+                                  "plan_id": Userr.userData.planId,
+                                  "budget": 0,
+                                  "status": "Cancelled",
+                                });
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (_) =>
+                                            GroceryBudgetScreen(true)));
+                              },
+                              child: Text("Yes"),
+                              color: Colors.red,
+                            ),
+                            MaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("No"),
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  await FirebaseFirestore.instance
+                      .collection("User")
+                      .doc(Userr.userData.uid)
+                      .update({
+                    "plan_id": "",
+                    "startDate": 0,
+                    "endDate": 0,
+                  });
+                  await FirebaseFirestore.instance
+                      .collection("User")
+                      .doc(Userr.userData.uid)
+                      .collection("plan_history")
+                      .add({
+                    "plan_id": Userr.userData.planId,
+                    "budget": 0,
+                    "status": "Cancelled",
+                  });
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_) => GroceryBudgetScreen(true)));
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: const Color(0xffFFFFFF),
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: Colors.black,
+                    )),
+                width: MediaQuery.of(context).size.width,
+                height: 50,
+                child: Center(
+                  child: widget.isPlanCompleted || widget.anyPlan
+                      ? const Text("Create a new Plan",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 14))
+                      : const Text(
+                          "CANCEL AND CREATE NEW",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 14),
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }

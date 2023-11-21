@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/receipt_controller.dart';
+import 'package:intl/intl.dart';
 
 class ReceiptsDataSource extends DataTableSource {
   final receiptController = Get.find<ReceiptController>();
@@ -15,7 +16,10 @@ class ReceiptsDataSource extends DataTableSource {
       const DataCell(Text("")),
       DataCell(
           Text(receiptController.receiptModals[index].totalSpend.toString())),
-      DataCell(Text(receiptController.receiptModals[index].trxDate.toString())),
+      DataCell(Text(DateFormat("dd/MM/yyyy")
+          .format(DateTime.fromMillisecondsSinceEpoch(
+              receiptController.receiptModals[index].updateTime!))
+          .toString())),
 
       //DataCell(Text(receiptController.receiptModals[index].userId.toString())),
 

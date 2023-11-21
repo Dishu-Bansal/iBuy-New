@@ -1,21 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:freelance_ibuy_app/authentication/forgot_password_screen.dart';
 import 'package:freelance_ibuy_app/authentication/input_user_details.dart';
 import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
+import 'package:freelance_ibuy_app/screens/routes.dart';
 
 import '../utils.dart';
 
-class CreateAccountScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   static String email = "";
   static String pass = "";
   // static bool isEmailUser = false;
-  const CreateAccountScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
-  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _CreateAccountScreenState extends State<CreateAccountScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -104,8 +106,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             email: emailController.text.toString().trim(),
             password: passwordController.text.toString().trim());
 
-        CreateAccountScreen.email = emailController.text.toString().trim();
-        CreateAccountScreen.pass = passwordController.text.toString().trim();
+        LoginScreen.email = emailController.text.toString().trim();
+        LoginScreen.pass = passwordController.text.toString().trim();
 
         setState(() {
           isLoading = false;
@@ -115,8 +117,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           context,
           MaterialPageRoute(builder: (context) {
             return InputUserDetails(
-              email: CreateAccountScreen.email,
-              password: CreateAccountScreen.pass,
+              email: LoginScreen.email,
+              password: LoginScreen.pass,
             );
           }),
         );
@@ -180,7 +182,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       children: [
                         Center(child: Image.asset("assets/Group 131.png")),
                         const Text(
-                          "Create New Account",
+                          "Login to your Account",
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -268,45 +270,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 const SizedBox(
                                   height: 30,
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    signUp(context);
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xffFEC107),
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 50,
-                                    child: const Center(
-                                      child: Text(
-                                        "Create Account",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
                                 // InkWell(
-                                //   onTap: () => signIn(context),
+                                //   onTap: () {
+                                //     signUp(context);
+                                //   },
                                 //   child: Container(
                                 //     decoration: BoxDecoration(
-                                //         color: Colors.white,
-                                //         borderRadius: BorderRadius.circular(25),
-                                //         border: Border.all(
-                                //           color: Colors.black,
-                                //           width: 1,
-                                //         )),
+                                //       color: const Color(0xffFEC107),
+                                //       borderRadius: BorderRadius.circular(25),
+                                //     ),
                                 //     width: MediaQuery.of(context).size.width,
                                 //     height: 50,
                                 //     child: const Center(
                                 //       child: Text(
-                                //         "SIGN IN",
+                                //         "SIGN UP",
                                 //         style: TextStyle(
                                 //             fontWeight: FontWeight.w500,
                                 //             fontSize: 14),
@@ -314,27 +291,53 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 //     ),
                                 //   ),
                                 // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(20),
-                                //   child: Center(
-                                //     child: GestureDetector(
-                                //       onTap: () async {
-                                //         AppRoutes.push(context,
-                                //             const ForgotPasswordScreen());
-                                //         // await _displayTextInputDialog(context);
-                                //         // //display a toast with success message
-                                //         // ScaffoldMessenger.of(context)
-                                //         //     .showSnackBar(const SnackBar(
-                                //         //         content: Text(
-                                //         //             'Password reset link sent to your email')));
-                                //         // Navigator.pop(context);
-                                //       },
-                                //       child: const Text(
-                                //         "Forgot Password?",
-                                //       ),
-                                //     ),
-                                //   ),
+                                // const SizedBox(
+                                //   height: 10,
                                 // ),
+                                InkWell(
+                                  onTap: () => signIn(context),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xffFEC107),
+                                      borderRadius: BorderRadius.circular(25),
+                                      // border: Border.all(
+                                      //   color: Colors.black,
+                                      //   width: 1,
+                                      // )
+                                    ),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 50,
+                                    child: const Center(
+                                      child: Text(
+                                        "SIGN IN",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        AppRoutes.push(context,
+                                            const ForgotPasswordScreen());
+                                        // await _displayTextInputDialog(context);
+                                        // //display a toast with success message
+                                        // ScaffoldMessenger.of(context)
+                                        //     .showSnackBar(const SnackBar(
+                                        //         content: Text(
+                                        //             'Password reset link sent to your email')));
+                                        // Navigator.pop(context);
+                                      },
+                                      child: const Text(
+                                        "Forgot Password?",
+                                      ),
+                                    ),
+                                  ),
+                                ),
                                 InkWell(
                                   onTap: () async {
                                     await Utils().signInWithGoogle(context);
