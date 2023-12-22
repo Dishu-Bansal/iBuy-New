@@ -66,9 +66,6 @@ class RetailersPlansScreen extends StatelessWidget {
                               //   label: Text(''),
                               // ),
                               DataColumn2(
-                                label: Text('Customer Count'),
-                              ),
-                              DataColumn2(
                                 label: Text('Plan ID'),
                               ),
                               DataColumn2(
@@ -79,6 +76,9 @@ class RetailersPlansScreen extends StatelessWidget {
                               ),
                               DataColumn(
                                 label: Text('End Date'),
+                              ),
+                              DataColumn2(
+                                label: Text('Customer Count'),
                               ),
                               DataColumn(
                                 label: Text('Max Customers'),

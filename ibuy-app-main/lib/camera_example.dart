@@ -379,9 +379,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   final ImagePicker _picker = ImagePicker();
 
   Future<void> uploadPic(XFile imageFile) async {
-    setState(() {
-      //isLoading = true;
-    });
+    setState(() {});
     String imgPath = imageFile.path.split("/").last;
     Reference reference = _storage
         .ref()

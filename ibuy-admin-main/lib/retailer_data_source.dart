@@ -35,11 +35,11 @@ class RetailerDataSource extends DataTableSource {
       //         activeColor: kPrimaryColor),
       //   ),
       // ),
-      DataCell(Text(retailerController.retailers[index].count.toString())),
       DataCell(Text(retailerController.retailers[index].planName.toString())),
       DataCell(Text(retailerController.retailers[index].storeName.toString())),
       DataCell(Text(retailerController.retailers[index].startDate!)),
       DataCell(Text(retailerController.retailers[index].enddate.toString())),
+      DataCell(Text(retailerController.retailers[index].count.toString())),
       DataCell(
           Text(retailerController.retailers[index].maxCustomers.toString())),
       DataCell(

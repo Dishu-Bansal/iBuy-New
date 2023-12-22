@@ -24,12 +24,14 @@ class LoginController extends GetxController {
         if (value.data()?["status"] == true) {
           //navigate to home page
           //display a snackbar with success message
-          Get.snackbar("Success", "Login successful",
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              isDismissible: true,
-              duration: Duration(seconds: 15));
+          Get.snackbar(
+            "Success",
+            "Login successful",
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            isDismissible: true,
+          );
           Get.offAll(() => const HomePage());
         } else {
           Get.snackbar("Approval Pending",

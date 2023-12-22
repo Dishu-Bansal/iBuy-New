@@ -13,7 +13,7 @@ class ReceiptsDataSource extends DataTableSource {
       DataCell(
           Text(receiptController.receiptModals[index].retailerName.toString())),
       DataCell(Text(receiptController.receiptModals[index].userId.toString())),
-      const DataCell(Text("")),
+      DataCell(Text(receiptController.receiptModals[index].planId.toString())),
       DataCell(
           Text(receiptController.receiptModals[index].totalSpend.toString())),
       DataCell(Text(DateFormat("dd/MM/yyyy")

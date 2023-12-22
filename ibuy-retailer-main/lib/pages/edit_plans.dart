@@ -478,6 +478,10 @@ class _StoreSelectionState extends State<StoreSelection> {
         });
       });
     }
+    final storeController2 = Get.find<ViewAddStoreController>();
+
+    List selectedStores2 =
+        storeController2.checkedStores.map((e) => e.toString()).toList();
     return prepared
         ? Row(
             children: [
@@ -603,7 +607,7 @@ class _StoreSelectionState extends State<StoreSelection> {
               SizedBox(
                 width: 15,
               ),
-              Text(selectedStores.length.toString() + " stores selected"),
+              Text(selectedStores2.length.toString() + " stores selected"),
             ],
           )
         : CircularProgressIndicator();

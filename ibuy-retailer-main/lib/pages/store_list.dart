@@ -128,9 +128,38 @@ class _StoreListState extends State<StoreList> {
                                           Curves.fastLinearToSlowEaseIn,
                                     );
                                   } else {
-                                    //delete the selected stores
-                                    storeController.deleteStores();
-                                    storeController.update();
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text("Are you Sure?"),
+                                            content: Text(
+                                                "Please note that this store will no longer be available on the App for new customers. Any existing customer plans running at this store will still continue to function"),
+                                            actions: [
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  //delete the selected stores
+                                                  storeController
+                                                      .deleteStores();
+                                                  storeController.update();
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text(
+                                                  "DELETE",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                color: Colors.red,
+                                              ),
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text("Cancel"),
+                                              ),
+                                            ],
+                                          );
+                                        });
                                   }
                                 },
                                 child: Row(

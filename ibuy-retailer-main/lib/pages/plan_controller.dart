@@ -143,7 +143,7 @@ class PlanController extends GetxController {
             Get.snackbar(
                 "Plans Activated", "The selected plans have been activated",
                 snackPosition: SnackPosition.BOTTOM);
-          } else if (value.data()?["status"] == "At Capacity") {
+          } else if (current.status == "At Capacity") {
             if (value.data()?['usersEnrolled'] <
                 value.data()?['maxCustomers']) {
               await FirebaseFirestore.instance
@@ -159,6 +159,29 @@ class PlanController extends GetxController {
             Get.snackbar(
                 "Error", "Plan At Capacity. Please update Max Customers first.",
                 snackPosition: SnackPosition.BOTTOM);
+          } else if (current.status == "InActive") {
+            await FirebaseFirestore.instance
+                .collection("retailers")
+                .where("uid", isEqualTo: current.createdBy!)
+                .get()
+                .then((value) async {
+              DocumentSnapshot x = value.docs.first;
+              if (x["status"] == true) {
+                await FirebaseFirestore.instance
+                    .collection("plans")
+                    .doc(element)
+                    .update({"status": "Active"}).then((value) {
+                  getPlans();
+                });
+                Get.snackbar(
+                    "Plans Activated", "The selected plans have been activated",
+                    snackPosition: SnackPosition.BOTTOM);
+              } else {
+                Get.snackbar("Error",
+                    "Your Account has been deactivated. Please contact the administrator before making any changes",
+                    snackPosition: SnackPosition.BOTTOM);
+              }
+            });
           }
         } else {
           Get.snackbar("Error",

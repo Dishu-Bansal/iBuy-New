@@ -67,7 +67,7 @@ class ViewAddStoreController extends GetxController {
   final storeName = TextEditingController();
   final storeCode = TextEditingController();
   final province = TextEditingController();
-  final country = TextEditingController();
+  final country = TextEditingController(text: 'Canada');
   final postalCode = TextEditingController();
   final city = TextEditingController();
   final add1 = TextEditingController();

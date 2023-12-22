@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/models/receipt_modal.dart';
 
+import 'models/retailer_modal.dart';
+
 class ReceiptController extends GetxController {
   var currReceiptUrl = ''.obs;
   final receiptModals = <ReceiptModal>[].obs;
+  List<RetailerModal> plans = List.empty(growable: true);
   var index = 0;
   var customerId = "".obs;
   List<ReceiptModal> pendingReceipts = List.empty(growable: true);
@@ -20,12 +23,21 @@ class ReceiptController extends GetxController {
   //call the getReceipt function when the controller is initialized
 
   Future getReceiptModals() async {
+    plans.clear();
+    try {
+      var snapshot = await FirebaseFirestore.instance.collection("plans").get();
+      for (var element in snapshot.docs) {
+        plans.add(RetailerModal.fromMap(element));
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
     receiptModals.clear();
     try {
       var snapshot =
           await FirebaseFirestore.instance.collection("receipts").get();
       for (var element in snapshot.docs) {
-        receiptModals.add(ReceiptModal.fromMap(element));
+        receiptModals.add(ReceiptModal.fromMap(element, plans));
       }
       receiptModals.sort((a, b) => b.updateTime!.compareTo(a.updateTime!));
     } catch (e) {

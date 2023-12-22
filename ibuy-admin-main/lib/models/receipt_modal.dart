@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ibuy_admin_app/models/retailer_modal.dart';
 
 class ReceiptModal {
   String? imageUrl;
@@ -26,7 +27,7 @@ class ReceiptModal {
     this.updateTime,
   });
 
-  ReceiptModal.fromMap(DocumentSnapshot map) {
+  ReceiptModal.fromMap(DocumentSnapshot map, List<RetailerModal> plans) {
     imageUrl = map['receiptUrl'];
     time = map['time'];
     userId = map['user_uid'];
@@ -36,7 +37,8 @@ class ReceiptModal {
     trxDate = map['trxDate'];
     totalSpend = map['totalSpend'];
     last4digits = map['last4Digits'];
-    planId = map['plan_id'];
+    planId =
+        plans.firstWhere((element) => element.id == map['plan_id']).planName;
     updateTime = map['update_time'];
   }
 }

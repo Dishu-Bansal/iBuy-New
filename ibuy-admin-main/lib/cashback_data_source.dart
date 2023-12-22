@@ -38,8 +38,8 @@ class CashbackDatasource extends DataTableSource {
         ),
       ),
       DataCell(Text(cashbackController.cashbacks[index].uid.toString())),
-      DataCell(
-          Text("\$${cashbackController.cashbacks[index].amount.toString()}")),
+      DataCell(Text(
+          "\$${cashbackController.cashbacks[index].amount!.toStringAsFixed(2)}")),
       DataCell(
         //if the status is "new", return a chip with purple background with text "new", if the status is "approved", return a chip with green background with text "approved" and if the status is "rejected", return a chip with red background with text "rejected"
         cashbackController.cashbacks[index].status == "processing"

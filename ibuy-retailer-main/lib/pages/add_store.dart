@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:geocode/geocode.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,7 @@ class AddStore extends StatelessWidget {
                 Flexible(
                   child: TextFormField(
                     controller: storeController.country,
+                    readOnly: true,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Country",
@@ -30,7 +32,7 @@ class AddStore extends StatelessWidget {
                       fillColor: Colors.white,
                       filled: true,
                       labelStyle: const TextStyle(color: Colors.black45),
-
+                      enabled: false,
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(35.0),
                         borderSide: const BorderSide(
@@ -114,12 +116,12 @@ class AddStore extends StatelessWidget {
                         ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Store name cannot be empty";
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.isEmpty) {
+                    //     return "Store name cannot be empty";
+                    //   }
+                    //   return null;
+                    // },
                   ),
                 ),
                 const SizedBox(
@@ -130,7 +132,7 @@ class AddStore extends StatelessWidget {
                     controller: storeController.add1,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
-                      labelText: "Store Address 1",
+                      labelText: "Street Number",
                       //border: OutlineInputBorder(),
                       fillColor: Colors.white,
                       filled: true,
@@ -151,7 +153,7 @@ class AddStore extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Store address 1 cannot be empty";
+                        return "Street Number cannot be empty";
                       }
                       return null;
                     },
@@ -169,7 +171,7 @@ class AddStore extends StatelessWidget {
                     controller: storeController.add2,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
-                      labelText: "Store Address 2",
+                      labelText: "Store Name",
                       //border: OutlineInputBorder(),
                       fillColor: Colors.white,
                       filled: true,
@@ -188,12 +190,12 @@ class AddStore extends StatelessWidget {
                         ),
                       ),
                     ),
-                    /*validator: (value) {
+                    validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Store address 2 cannot be empty";
+                        return "Store Name cannot be empty";
                       }
                       return null;
-                    },*/
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -235,36 +237,72 @@ class AddStore extends StatelessWidget {
                   width: 10,
                 ),
                 Flexible(
-                  child: TextFormField(
-                    controller: storeController.province,
-                    cursorColor: Colors.black45,
-                    decoration: InputDecoration(
-                      labelText: "Province",
-                      //border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                      labelStyle: const TextStyle(color: Colors.black45),
+                  child: DropdownSearch<String>(
+                    popupProps: PopupProps.menu(
+                      showSelectedItems: true,
+                    ),
+                    items: [
+                      "Ontario",
+                      "Manitoba",
+                      "British Columbia",
+                      'Nova Scotia'
+                    ],
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                      dropdownSearchDecoration: InputDecoration(
+                        labelText: "Province",
+                        //border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                        filled: true,
+                        labelStyle: const TextStyle(color: Colors.black45),
 
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(35.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(35.0),
+                          borderSide: const BorderSide(
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Province cannot be empty";
-                      }
-                      return null;
+                    onChanged: (value) {
+                      storeController.province.text = value!;
                     },
                   ),
+                  // child: TextFormField(
+                  //   controller: storeController.province,
+                  //   cursorColor: Colors.black45,
+                  //   decoration: InputDecoration(
+                  //     labelText: "Province",
+                  //     //border: OutlineInputBorder(),
+                  //     fillColor: Colors.white,
+                  //     filled: true,
+                  //     labelStyle: const TextStyle(color: Colors.black45),
+                  //
+                  //     focusedBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(35.0),
+                  //       borderSide: const BorderSide(
+                  //         color: Colors.grey,
+                  //       ),
+                  //     ),
+                  //     enabledBorder: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(35.0),
+                  //       borderSide: const BorderSide(
+                  //         color: Colors.grey,
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return "Province cannot be empty";
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                 ),
                 const SizedBox(
                   width: 10,
@@ -317,40 +355,41 @@ class AddStore extends StatelessWidget {
                       GestureDetector(
                         onTap: () async {
                           if (formKey.currentState!.validate()) {
-                            try {
-                              Coordinates coord =
-                                  await geoCode.forwardGeocoding(
-                                      address: storeController.add1.text +
-                                          " " +
-                                          storeController.add2.text +
-                                          ", " +
-                                          storeController.city.text +
-                                          ", " +
-                                          storeController.province.text +
-                                          ", " +
-                                          storeController.country.text +
-                                          " " +
-                                          storeController.postalCode.text);
-                              storeController.addStore(
-                                  storeController.storeName.text,
-                                  storeController.storeCode.text,
-                                  storeController.province.text,
-                                  storeController.country.text,
-                                  storeController.postalCode.text,
-                                  storeController.city.text,
-                                  storeController.add1.text,
-                                  storeController.add2.text);
-                            } catch (e) {
-                              Get.snackbar(
-                                  "Input error",
-                                  "Error finding location. Please double check the address. " +
-                                      e.toString());
-                            }
                             if (storeController.stores.any((element) =>
                                 element.storeCode! ==
                                 storeController.storeCode.text)) {
                               Get.snackbar("Input error",
                                   "Same Store Code already exits.");
+                            } else {
+                              try {
+                                Coordinates coord =
+                                    await geoCode.forwardGeocoding(
+                                        address: storeController.add1.text +
+                                            " " +
+                                            storeController.add2.text +
+                                            ", " +
+                                            storeController.city.text +
+                                            ", " +
+                                            storeController.province.text +
+                                            ", " +
+                                            storeController.country.text +
+                                            " " +
+                                            storeController.postalCode.text);
+                                storeController.addStore(
+                                    storeController.storeName.text,
+                                    storeController.storeCode.text,
+                                    storeController.province.text,
+                                    storeController.country.text,
+                                    storeController.postalCode.text,
+                                    storeController.city.text,
+                                    storeController.add1.text,
+                                    storeController.add2.text);
+                              } catch (e) {
+                                Get.snackbar(
+                                    "Input error",
+                                    "Error finding location. Please double check the address. " +
+                                        e.toString());
+                              }
                             }
                           } else {
                             //display error message with snackbar

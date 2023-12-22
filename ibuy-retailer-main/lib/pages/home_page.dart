@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool loading = true;
+  String retailer_name = "";
 
   getInfo() async {
     await FirebaseFirestore.instance
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Head(
                           name: subHeadings[sidebarController.selIndex],
+                          retailer: retailer_name,
                         ),
                         Expanded(child: pageBuilder(sidebarController)),
                       ],

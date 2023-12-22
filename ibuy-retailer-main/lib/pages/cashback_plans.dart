@@ -258,7 +258,7 @@ class CashBackPlans extends StatelessWidget {
                                 //display erroe message with snackbar with Getx
                                 Get.snackbar(
                                   "Error",
-                                  "Please select a plan to activate",
+                                  "Please select a plan to Deactivate",
                                   snackPosition: SnackPosition.BOTTOM,
                                   backgroundColor: Colors.red,
                                   colorText: Colors.white,

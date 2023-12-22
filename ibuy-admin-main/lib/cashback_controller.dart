@@ -22,7 +22,7 @@ class CashbackController extends GetxController {
           int index = cashbacks.indexWhere(
               (e) => e.uid == element["uid"] && e.status == element["status"]);
           CashbackModal c = cashbacks.elementAt(index);
-          c.amount = element["amount"];
+          c.amount = element["amount"] + c.amount;
           cashbacks[index] = c;
         } else {
           cashbacks.add(CashbackModal.fromMap(element));

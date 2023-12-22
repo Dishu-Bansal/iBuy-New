@@ -196,11 +196,9 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
             : SingleChildScrollView(
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Flexible(
                           child: Userr.userData.planId == ""
                               ? Text("No plans yet. Lets Select a plan!")
                               : (endDateReached
@@ -215,12 +213,11 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
                                               "We are processing your receipts. Keep scanning more receipts to reach your spend level by ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))}")
                                           : (spent == 0
                                               ? Text(
-                                                  "Congratulations for your new plan with ${Userr.userData.retailer!} \n Shop at ${Userr.userData.retailer!} and start earning \n spend \$\$ before ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))} to earn you cashback.")
+                                                  "Congratulations for your new plan with ${Userr.userData.retailer!} \nShop at ${Userr.userData.retailer!} and start earning \nSpend \$${Userr.userData.budget} before ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))} to earn you cashback.",
+                                                )
                                               : Text(
                                                   "You are progressing well. Keep scanning more receipts to reach your spend level by ${DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(Userr.userData.end!))}"))))),
-                        ),
-                      ],
-                    ),
+                        )),
                     Userr.userData.planId == ""
                         ? SizedBox()
                         : Padding(
