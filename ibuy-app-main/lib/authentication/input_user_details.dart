@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/screens/grocery_budget_screen.dart';
 import 'package:freelance_ibuy_app/screens/routes.dart';
+import 'package:freelance_ibuy_app/utils.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InputUserDetails extends StatefulWidget {
@@ -212,8 +213,9 @@ class _InputUserDetailsState extends State<InputUserDetails> {
 
   Future<void> userUploadToDB() async {
     // await uploadPic(_img!);
+    String id = await FirebaseAuth.instance.currentUser!.uid;
     Map<String, dynamic> data = {
-      "uid": FirebaseAuth.instance.currentUser!.uid,
+      "uid": id,
       "img_url": InputUserDetails.imgUrl,
       "email": widget.email,
       "name": nameController.text.toString().trim(),
@@ -231,7 +233,7 @@ class _InputUserDetailsState extends State<InputUserDetails> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set(data)
         .then((va) async {
-      //getDataFromDB(Userr.userData.uid ?? "");
+      Utils().getDataFromDB(id);
       //showToast("Thanks for Sign Up", context);
 
       AppRoutes.push(context, GroceryBudgetScreen(false));

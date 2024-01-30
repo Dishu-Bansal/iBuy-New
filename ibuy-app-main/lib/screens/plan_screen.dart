@@ -257,7 +257,7 @@ class _PlanScreenState extends State<PlanScreen> {
                 .update({"status": "At Capacity"}).then((value) {
               debugPrint("updated");
             }).catchError((onError) {
-              debugPrint(onError.toString());
+              debugPrint("Error:" + onError.toString());
             });
           }
           FirebaseFirestore.instance
@@ -266,7 +266,7 @@ class _PlanScreenState extends State<PlanScreen> {
               .update({"usersEnrolled": enrolledCount + 1}).then((value) {
             debugPrint("updated");
           }).catchError((onError) {
-            debugPrint(onError.toString());
+            debugPrint("Error is: " + onError.toString());
           });
         });
       }
