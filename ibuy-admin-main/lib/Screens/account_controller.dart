@@ -24,14 +24,36 @@ class AccountController extends GetxController {
           await FirebaseFirestore.instance.collection("retailers").get();
       for (var element in snapshot.docs) {
         List<RetailerModal> plans = [];
+        double sales = 0;
+        double cashback = 0;
         var snapshot2 = await FirebaseFirestore.instance
             .collection("plans")
             .where("createdBy", isEqualTo: element.id)
             .get();
         for (var element2 in snapshot2.docs) {
           plans.add(RetailerModal.fromMap(element2));
+          await FirebaseFirestore.instance
+              .collection('receipts')
+              .where("plan_id", isEqualTo: element2.id)
+              .where("status", isEqualTo: "approved")
+              .get()
+              .then((value) {
+            for (DocumentSnapshot d in value.docs) {
+              sales = sales + double.parse(d["totalSpend"]);
+            }
+          });
+          await FirebaseFirestore.instance
+              .collection("cashback")
+              .where("planId", isEqualTo: element2.id)
+              .where("status", isEqualTo: "paid")
+              .get()
+              .then((value) {
+            for (DocumentSnapshot i in value.docs) {
+              cashback = cashback + i["amount"];
+            }
+          });
         }
-        accounts.add(AccountModal.fromMap(element, plans));
+        accounts.add(AccountModal.fromMap(element, plans, sales, cashback));
         checked.add(false);
       }
     } catch (e) {

@@ -10,6 +10,8 @@ class AccountModal {
   String? firstName;
   String? lastName;
   List<RetailerModal>? plans;
+  double? sales;
+  double? cashback;
 
   AccountModal({
     this.accId,
@@ -20,9 +22,12 @@ class AccountModal {
     this.firstName,
     this.lastName,
     this.plans,
+    this.sales,
+    this.cashback,
   });
 
-  AccountModal.fromMap(DocumentSnapshot map, List<RetailerModal> plansList) {
+  AccountModal.fromMap(DocumentSnapshot map, List<RetailerModal> plansList,
+      double this.sales, double this.cashback) {
     accId = map['uid'];
     email = map['email'];
     retailerName = map['retailer_name'];

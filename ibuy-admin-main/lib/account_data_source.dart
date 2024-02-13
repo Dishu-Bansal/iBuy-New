@@ -4,12 +4,17 @@ import 'package:ibuy_admin_app/Screens/account_controller.dart';
 import 'package:intl/intl.dart';
 
 import '../constants.dart';
+import 'models/retailer_modal.dart';
 
 class AccountsDataSource extends DataTableSource {
   final accController = Get.find<AccountController>();
 
   @override
   DataRow? getRow(int index) {
+    int served = 0;
+    for (RetailerModal p in accController.accounts[index].plans!) {
+      served = served + p.served!;
+    }
     return DataRow(cells: [
       DataCell(
         Obx(
@@ -69,9 +74,16 @@ class AccountsDataSource extends DataTableSource {
               )),
       ),
       DataCell(Text(accController.accounts[index].plans!
-          .where((element) => element.status == true)
+          .where((element) => element.status == "Active")
           .length
           .toString())),
+      DataCell(Text(accController.accounts[index].plans!
+          .where((element) => element.status == "At Capacity")
+          .length
+          .toString())),
+      DataCell(Text(served.toString())),
+      DataCell(Text(accController.accounts[index].sales!.toString())),
+      DataCell(Text(accController.accounts[index].cashback!.toString())),
       DataCell(Text(DateFormat("dd/MM/yyyy")
           .format(DateTime.fromMillisecondsSinceEpoch(
               accController.accounts[index].creationDate!))

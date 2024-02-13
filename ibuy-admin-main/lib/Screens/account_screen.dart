@@ -82,6 +82,18 @@ class AccountsScreen extends StatelessWidget {
                                 label: Text('Active Plans'),
                               ),
                               DataColumn(
+                                label: Text('Completed Plans'),
+                              ),
+                              DataColumn(
+                                label: Text('Customers Served'),
+                              ),
+                              DataColumn(
+                                label: Text('Sales'),
+                              ),
+                              DataColumn(
+                                label: Text('Cashback'),
+                              ),
+                              DataColumn(
                                 label: Text('Created On'),
                               ),
                             ],

@@ -17,6 +17,7 @@ class RetailerModal {
   double? cashback;
   String? status;
   int? count;
+  int? served;
 
   RetailerModal(
       {this.startDate,
@@ -34,7 +35,8 @@ class RetailerModal {
       this.planName,
       this.usersEnrolled,
       this.id,
-      this.count});
+      this.count,
+      this.served});
 
   RetailerModal.fromMap(DocumentSnapshot map) {
     startDate = map['startDate'];
@@ -53,5 +55,6 @@ class RetailerModal {
     id = map.id;
     planName = map['planName'];
     count = map['usersEnrolled'];
+    served = map["customers_served"];
   }
 }
