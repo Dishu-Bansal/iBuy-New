@@ -99,6 +99,7 @@ class PlanController extends GetxController {
       "status": "Disabled",
       'creationDate': DateTime.now().millisecondsSinceEpoch,
       "usersEnrolled": 0,
+      "customers_served": 0,
       "storesSelected": stores,
     }).then((value) async {
       for (String store in stores) {

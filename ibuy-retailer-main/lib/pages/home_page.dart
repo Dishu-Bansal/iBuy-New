@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ibuy_app_retailer_web/constants.dart';
 import 'package:ibuy_app_retailer_web/main-homepage-screens/packs_screen.dart';
+import 'package:ibuy_app_retailer_web/models/plan_modal.dart';
 import 'package:ibuy_app_retailer_web/pages/cashback_plans.dart';
 import 'package:ibuy_app_retailer_web/pages/sidebar_controller.dart';
 import 'package:ibuy_app_retailer_web/pages/store_list.dart';
@@ -23,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool loading = true;
   String retailer_name = "";
+  List<PlanModal> plans = [];
 
   getInfo() async {
     await FirebaseFirestore.instance
@@ -33,6 +35,15 @@ class _HomePageState extends State<HomePage> {
       if (value != null) {
         QueryDocumentSnapshot<Map<String, dynamic>> doc = value.docs.first;
         retailer_name = doc["retailer_name"];
+      }
+    });
+    await FirebaseFirestore.instance
+        .collection("plans")
+        .where("createdBy", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) {
+      for (DocumentSnapshot d in value.docs) {
+        plans.add(PlanModal.fromMap(d));
       }
     });
     setState(() {
@@ -79,6 +90,38 @@ class _HomePageState extends State<HomePage> {
                         Head(
                           name: subHeadings[sidebarController.selIndex],
                           retailer: retailer_name,
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 35, horizontal: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Active Plans: " +
+                                    plans
+                                        .where((element) =>
+                                            element.status == "Active")
+                                        .length
+                                        .toString(),
+                                style: GoogleFonts.openSans(
+                                    fontSize: 15, fontWeight: FontWeight.w300),
+                              ),
+                              Text(
+                                "Completed Plans: " +
+                                    plans
+                                        .where((element) =>
+                                            element.status == "At Capacity")
+                                        .length
+                                        .toString(),
+                                style: GoogleFonts.openSans(
+                                    fontSize: 15, fontWeight: FontWeight.w300),
+                              ),
+                            ],
+                          ),
                         ),
                         Expanded(child: pageBuilder(sidebarController)),
                       ],

@@ -19,6 +19,7 @@ class PlanModal {
   List<String>? selectedStore;
   int? creationDate;
   int? LastUpdate;
+  int? served;
 
   PlanModal({
     this.startDate,
@@ -39,6 +40,7 @@ class PlanModal {
     this.selectedStore,
     this.creationDate,
     this.LastUpdate,
+    this.served,
   });
 
   PlanModal.fromMap(DocumentSnapshot map) {
@@ -56,6 +58,7 @@ class PlanModal {
     cashback = map['cashback'];
     usersEnrolled = map['usersEnrolled'];
     id = map.id;
+    served = map["customers_served"];
     planName = map['planName'];
     creationDate = map['creationDate'];
     LastUpdate = (map.data() as Map<String, dynamic>).containsKey("LastUpdate")

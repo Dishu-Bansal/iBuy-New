@@ -23,11 +23,7 @@ class PacksScreen extends StatelessWidget {
           crossAxisSpacing: 25,
           itemBuilder: (context, index) {
             return Pack(
-              name: packsController.plans[index].planName.toString(),
-              dateCreated: packsController.plans[index].creation!,
-              cashback: packsController.plans[index].maxCashback!,
-              users: packsController.plans[index].usersEnrolled!.toInt(),
-              isActive: packsController.plans[index].status!,
+              plan: packsController.plans[index],
             );
           },
         ),
