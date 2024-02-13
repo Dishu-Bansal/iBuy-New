@@ -74,9 +74,24 @@ class _PlanStatusScreenState extends State<PlanStatusScreen> {
             "budget": Userr.userData.budget,
             "status": "Completed",
           });
+          int served = 0;
+          await FirebaseFirestore.instance
+              .collection("plans")
+              .doc(Userr.userData.planId)
+              .get()
+              .then((value) {
+            served = value["customers_served"];
+          });
+          await FirebaseFirestore.instance
+              .collection("plans")
+              .doc(Userr.userData.planId)
+              .update({
+            "customers_served": served + 1,
+          });
           await FirebaseFirestore.instance.collection("cashback").add({
             "amount": (Userr.userData.budget * Userr.userData.cashback) / 100,
             "uid": Userr.userData.uid,
+            "planId": Userr.userData.planId,
             "status": "eligible",
           });
         }

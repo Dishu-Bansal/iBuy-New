@@ -35,6 +35,7 @@ class _PlanScreenState extends State<PlanScreen> {
   final f = DateFormat("dd MMMM, yyyy");
   List<QueryDocumentSnapshot<Map<String, dynamic>>> plansList = [];
   List<MyStore> storesList = [];
+  String error = "";
   Completer<GoogleMapController> _controller = Completer();
   var isLoading = false;
   Locate locate = Locate();
@@ -66,44 +67,53 @@ class _PlanScreenState extends State<PlanScreen> {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
       if (dat.isNotEmpty) {
         /*setState(() {*/
-        plansList = dat;
+        plansList = dat
+            .where((element) => DateFormat("dd/MM/yyyy")
+                .parse(element["endDate"])
+                .isAfter(DateTime.now()))
+            .toList();
         /*});*/
       }
     });
-    await FirebaseFirestore.instance
-        .collection('stores')
-        .get()
-        .then((value) async {
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
-      if (dat.isNotEmpty) {
-        storesList.clear();
-        /*setState(() {*/
-        for (QueryDocumentSnapshot store in dat) {
-          if (store['plan'] != '') {
-            if (plansList.any((element) => element.id == store['plan'])) {
-              List<Location> coord = await locationFromAddress(store['add1'] +
-                  ", " +
-                  store['add2'] +
-                  ", " +
-                  store['city'] +
-                  ", " +
-                  store['province'] +
-                  ", " +
-                  store['country'] +
-                  " " +
-                  store['postalCode']);
-              storesList.add(MyStore(
-                  store['storeName'],
-                  coord.first.latitude,
-                  coord.first.longitude,
-                  plansList
-                      .firstWhere((element) => element.id == store['plan'])));
+    if (plansList != null && plansList.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('stores')
+          .get()
+          .then((value) async {
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> dat = value.docs;
+        if (dat.isNotEmpty) {
+          storesList.clear();
+          /*setState(() {*/
+          for (QueryDocumentSnapshot s in dat) {
+            Map<String, dynamic> store = s.data() as Map<String, dynamic>;
+            if (store['plan'] != '') {
+              if (plansList.any((element) => element.id == store['plan'])) {
+                List<Location> coord = await locationFromAddress(store["add1"] +
+                    " " +
+                    store['add2'] +
+                    ", " +
+                    store['city'] +
+                    ", " +
+                    store['province'] +
+                    ", " +
+                    store['country'] +
+                    " " +
+                    store['postalCode']);
+                storesList.add(MyStore(
+                    store['storeName'],
+                    coord.first.latitude,
+                    coord.first.longitude,
+                    plansList
+                        .firstWhere((element) => element.id == store['plan'])));
+              }
             }
           }
+          /*});*/
         }
-        /*});*/
-      }
-    });
+      });
+    } else {
+      error = "No plans Nearby";
+    }
     setState(() {
       isLoading = false;
     });
@@ -155,62 +165,69 @@ class _PlanScreenState extends State<PlanScreen> {
                               fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          initialCameraPosition: CameraPosition(
-                              target: LatLng(data!.latitude, data!.longitude),
-                              zoom: 10),
-                          onMapCreated: (GoogleMapController controller) {
-                            _controller.complete(controller);
-                          },
-                          markers: List.generate(storesList.length, (index) {
-                            MyStore store = storesList.elementAt(index);
-                            return Marker(
-                                markerId: MarkerId(store.name),
-                                position: LatLng(store.lat, store.long));
-                          }).toSet(),
-                        ),
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: storesList.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: GestureDetector(
-                                onTap: () {
-                                  changePosition(storesList.elementAt(index));
+                      error == ""
+                          ? Container(
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              child: GoogleMap(
+                                mapType: MapType.normal,
+                                initialCameraPosition: CameraPosition(
+                                    target:
+                                        LatLng(data!.latitude, data!.longitude),
+                                    zoom: 10),
+                                onMapCreated: (GoogleMapController controller) {
+                                  _controller.complete(controller);
                                 },
-                                child: PlanCard(
-                                  company: storesList
-                                      .elementAt(index)
-                                      .name
-                                      .toString(),
-                                  cashback: storesList
-                                      .elementAt(index)
-                                      .plan!['cashback']
-                                      .toString(),
-                                  requiredSpend: storesList
-                                      .elementAt(index)
-                                      .plan!['required_spend']
-                                      .toString(),
-                                  endDate: (storesList
-                                          .elementAt(index)
-                                          .plan!['endDate'])
-                                      .toString(),
-                                  retailerId: storesList
-                                      .elementAt(index)
-                                      .plan!['createdBy']
-                                      .toString(),
-                                  button: getButton(index),
-                                ),
+                                markers:
+                                    List.generate(storesList.length, (index) {
+                                  MyStore store = storesList.elementAt(index);
+                                  return Marker(
+                                      markerId: MarkerId(store.name),
+                                      position: LatLng(store.lat, store.long));
+                                }).toSet(),
                               ),
-                            );
-                          },
-                        ),
-                      ),
+                            )
+                          : Text(error),
+                      error == ""
+                          ? Expanded(
+                              child: ListView.builder(
+                                itemCount: storesList.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        changePosition(
+                                            storesList.elementAt(index));
+                                      },
+                                      child: PlanCard(
+                                        company: storesList
+                                            .elementAt(index)
+                                            .name
+                                            .toString(),
+                                        cashback: storesList
+                                            .elementAt(index)
+                                            .plan!['cashback']
+                                            .toString(),
+                                        requiredSpend: storesList
+                                            .elementAt(index)
+                                            .plan!['required_spend']
+                                            .toString(),
+                                        endDate: (storesList
+                                                .elementAt(index)
+                                                .plan!['endDate'])
+                                            .toString(),
+                                        retailerId: storesList
+                                            .elementAt(index)
+                                            .plan!['createdBy']
+                                            .toString(),
+                                        button: getButton(index),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : SizedBox(),
                     ],
                   ),
                 ),
