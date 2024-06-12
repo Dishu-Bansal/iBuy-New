@@ -231,7 +231,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 ),
                                 TextFormField(
                                   controller: passwordController,
-                                  obscureText: true,
+                                  obscureText: false,
                                   cursorColor: Colors.grey,
                                   decoration: InputDecoration(
                                     prefixIcon: const Icon(

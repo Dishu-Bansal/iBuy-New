@@ -81,7 +81,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
             children: [
               TextFormField(
                 controller: passController,
-                obscureText: true,
+                obscureText: false,
                 cursorColor: Colors.grey,
                 decoration: InputDecoration(
                   labelText: "Enter your Password",

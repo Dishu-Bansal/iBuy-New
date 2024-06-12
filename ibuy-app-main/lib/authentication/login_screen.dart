@@ -233,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 TextFormField(
                                   controller: passwordController,
-                                  obscureText: true,
+                                  obscureText: false,
                                   cursorColor: Colors.grey,
                                   decoration: InputDecoration(
                                     prefixIcon: const Icon(
