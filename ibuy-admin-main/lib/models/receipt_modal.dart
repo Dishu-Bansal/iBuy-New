@@ -12,6 +12,9 @@ class ReceiptModal {
   String? totalSpend;
   String? last4digits;
   String? planId;
+  String? retailer;
+  String? startDate;
+  String? endDate;
   int? updateTime;
 
   ReceiptModal({
@@ -27,18 +30,25 @@ class ReceiptModal {
     this.updateTime,
   });
 
-  ReceiptModal.fromMap(DocumentSnapshot map, List<RetailerModal> plans) {
+  ReceiptModal.fromMap(DocumentSnapshot mape, List<RetailerModal> plans) {
+    Map<String, dynamic> map = mape.data() as Map<String, dynamic>;
     imageUrl = map['receiptUrl'];
     time = map['time'];
     userId = map['user_uid'];
     status = map['status'];
-    id = map.id;
+    id = mape.id;
     retailerName = map['retailerName'];
     trxDate = map['trxDate'];
     totalSpend = map['totalSpend'];
     last4digits = map['last4Digits'];
     planId =
         plans.firstWhere((element) => element.id == map['plan_id']).planName;
+    retailer =
+        plans.firstWhere((element) => element.id == map['plan_id']).company;
+    startDate =
+        plans.firstWhere((element) => element.id == map['plan_id']).startDate;
+    endDate =
+        plans.firstWhere((element) => element.id == map['plan_id']).enddate;
     updateTime = map['update_time'];
   }
 }

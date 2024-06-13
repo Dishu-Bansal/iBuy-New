@@ -11,6 +11,9 @@ class ReceiptController extends GetxController {
   List<RetailerModal> plans = List.empty(growable: true);
   var index = 0;
   var customerId = "".obs;
+  var retailer = "";
+  String? start, end;
+  List<String> cards = [];
   List<ReceiptModal> pendingReceipts = List.empty(growable: true);
 
   //Text editing controllers
@@ -48,7 +51,14 @@ class ReceiptController extends GetxController {
         receiptModals.where((p) => p.status == "Pending").toList();
     if (pendingReceipts.length >= 1) {
       customerId.value = pendingReceipts[index].userId!;
+      var x = await FirebaseFirestore.instance.collection("User").doc(customerId.value).get();
+      List<String> car = x.data()?['cards'] is Iterable ? List.from(x.data()?['cards']) : [];
+      cards = car.map((val) => val.substring(val.length - 4)).toList();
       currReceiptUrl.value = pendingReceipts[index].imageUrl!;
+      retailerName.value =  TextEditingValue(text: pendingReceipts[index].retailer!);
+      retailer = pendingReceipts[index].retailerName!;
+      start = pendingReceipts[index].startDate!;
+      end = pendingReceipts[index].endDate!;
     }
   }
 
@@ -89,13 +99,14 @@ class ReceiptController extends GetxController {
     //display a snackbar saying receipt approved
   }
 
-  void rejectReceipt() {
+  void rejectReceipt(String reason) {
     FirebaseFirestore.instance
         .collection('receipts')
         .doc(pendingReceipts[index].id)
         .update({
       'status': "rejected",
       'update_time': DateTime.now().millisecondsSinceEpoch,
+      'reason':reason,
     }).then((value) {
       Get.snackbar(
         "Receipt Rejected",

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/constants.dart';
 import 'package:ibuy_admin_app/receipt_controller.dart';
+import 'package:image_network/image_network.dart';
+import 'package:intl/intl.dart';
 
 class ProcessReceiptScreen extends StatelessWidget {
   const ProcessReceiptScreen({super.key});
@@ -9,6 +12,7 @@ class ProcessReceiptScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final receiptController = Get.put(ReceiptController());
+    print(receiptController.cards);
     final formKey = GlobalKey<FormState>();
     return Column(
       children: [
@@ -46,6 +50,8 @@ class ProcessReceiptScreen extends StatelessWidget {
                             child: TextFormField(
                               controller: receiptController.retailerName,
                               cursorColor: Colors.black45,
+                              readOnly: true,
+                              // initialValue: receiptController.retailer,
                               decoration: InputDecoration(
                                 labelText: "Retailer Name",
                                 //border: OutlineInputBorder(),
@@ -108,6 +114,14 @@ class ProcessReceiptScreen extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return "Field cannot be empty";
                                 }
+                                var format = DateFormat("dd/MM/yyyy");
+                                var start = format.parse(receiptController.start!);
+                                var end = format.parse(receiptController.end!);
+                                var current = format.parse(value);
+                                if(current.isAfter(end) || current.isBefore(start))
+                                  {
+                                    return "Date must be between plan dates";
+                                  }
                                 return null;
                               },
                             ),
@@ -120,6 +134,7 @@ class ProcessReceiptScreen extends StatelessWidget {
                               controller: receiptController.totalSpend,
                               cursorColor: Colors.black45,
                               decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.attach_money_outlined),
                                 labelText: "Total Spend",
                                 //border: OutlineInputBorder(),
                                 fillColor: Colors.white,
@@ -151,18 +166,21 @@ class ProcessReceiptScreen extends StatelessWidget {
                           const SizedBox(
                             width: 10,
                           ),
-                          Flexible(
-                            child: TextFormField(
-                              controller: receiptController.last4Digits,
-                              cursorColor: Colors.black45,
-                              decoration: InputDecoration(
+                      Flexible(
+                        child: TypeAheadField<String>(
+                          suggestionsCallback: (search) => receiptController.cards,
+                          builder: (context, controller, focusNode) {
+                            return TextFormField(
+                                controller: receiptController.last4Digits,
+                                focusNode: focusNode,
+                                cursorColor: Colors.black45,
+                                decoration: InputDecoration(
                                 labelText: "Last 4 digits",
                                 //border: OutlineInputBorder(),
                                 fillColor: Colors.white,
                                 filled: true,
                                 labelStyle:
                                     const TextStyle(color: Colors.black45),
-
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(35.0),
                                   borderSide: const BorderSide(
@@ -176,14 +194,67 @@ class ProcessReceiptScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              validator: (value) {
+                                validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return "Field cannot be empty";
                                 }
+                                if(!value.isNum)
+                                  {
+                                    return "Field must only have numbers";
+                                  }
+                                if(value.length != 4)
+                                  {
+                                    return "Must be 4 digits";
+                                  }
+                                if(receiptController.cards.length >= 3 && !receiptController.cards.contains(value))
+                                  {
+                                    return "Maximum Card limit reached";
+                                  }
                                 return null;
                               },
-                            ),
-                          ),
+                            );
+                          },
+                          itemBuilder: (context, card) {
+                            return ListTile(
+                              title: Text(card),
+                            );
+                          }, onSelected: (String value) {
+                            receiptController.last4Digits.value = TextEditingValue(text: value);
+                        },
+                        ),
+                      ),
+                          // Flexible(
+                          //   child: TextFormField(
+                          //     controller: receiptController.last4Digits,
+                          //     cursorColor: Colors.black45,
+                          //     decoration: InputDecoration(
+                          //       labelText: "Last 4 digits",
+                          //       //border: OutlineInputBorder(),
+                          //       fillColor: Colors.white,
+                          //       filled: true,
+                          //       labelStyle:
+                          //           const TextStyle(color: Colors.black45),
+                          //       focusedBorder: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(35.0),
+                          //         borderSide: const BorderSide(
+                          //           color: Colors.grey,
+                          //         ),
+                          //       ),
+                          //       enabledBorder: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(35.0),
+                          //         borderSide: const BorderSide(
+                          //           color: Colors.grey,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     validator: (value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return "Field cannot be empty";
+                          //       }
+                          //       return null;
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       ),
                     );
@@ -196,12 +267,7 @@ class ProcessReceiptScreen extends StatelessWidget {
           child: Obx(
             () => receiptController.currReceiptUrl.value == ""
                 ? const Icon(Icons.no_transfer_outlined)
-                : Image.network(
-                    receiptController.currReceiptUrl.value,
-                    /*height: 400,
-                width: 800,*/
-                    fit: BoxFit.fill,
-                  ),
+                : ImageNetwork(image: receiptController.currReceiptUrl.value, height: 500, width: 500, fitWeb: BoxFitWeb.fill,)
           ),
         ),
         const SizedBox(height: 20),
@@ -269,7 +335,26 @@ class ProcessReceiptScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        receiptController.rejectReceipt();
+                        String reason="";
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: Text("Select Reason"),
+                            content: DropdownButtonFormField(
+                                hint: Text("Select Reason"),
+                                items: ["Transaction date invalid (the date range for the plan was xxx-to-yyy, but the transaction was made on zzzz)", "Credit card not associated with the account", "Receipt does not belong to the selected retailer"].map((val) => DropdownMenuItem<String>(child: Text(val), value: val,)).toList(),
+                                onChanged: (value) {
+                                  reason = value ?? "";
+                                }),
+                            actions: [
+                              MaterialButton(
+                                onPressed: () {receiptController.rejectReceipt(reason);},
+                                child: Text("Reject", style: TextStyle(color: Colors.white),),
+                                color: Colors.red,
+                              ),
+                              MaterialButton(onPressed: () {Navigator.of(context).pop();}, child: Text("Cancel"),),
+                            ],
+                          );
+                        });
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -293,35 +378,35 @@ class ProcessReceiptScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        receiptController.reUpload();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 241, 147, 17),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 10),
-                          child: Row(
-                            children: const [
-                              Text(
-                                "Request ReUpload",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(
+                    //   width: 10,
+                    // ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     receiptController.reUpload();
+                    //   },
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: const Color.fromARGB(255, 241, 147, 17),
+                    //       borderRadius: BorderRadius.circular(50),
+                    //     ),
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.symmetric(
+                    //           horizontal: 15, vertical: 10),
+                    //       child: Row(
+                    //         children: const [
+                    //           Text(
+                    //             "Request ReUpload",
+                    //             style: TextStyle(
+                    //                 color: Colors.white,
+                    //                 fontSize: 15,
+                    //                 fontWeight: FontWeight.w500),
+                    //           )
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -332,3 +417,31 @@ class ProcessReceiptScreen extends StatelessWidget {
     );
   }
 }
+
+class DropDownField extends StatefulWidget {
+  ReceiptController? receiptController;
+  DropDownField(ReceiptController? receiptController, {super.key});
+
+  @override
+  State<DropDownField> createState() => _DropDownFieldState(receiptController);
+}
+
+class _DropDownFieldState extends State<DropDownField> {
+  String _selectedValue = "";
+  ReceiptController? receiptController;
+
+  _DropDownFieldState(ReceiptController? receiptController);
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      value: _selectedValue,
+      items: receiptController?.cards.map((value) => DropdownMenuItem(child: Text(value))).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedValue = value!;
+        });
+      },
+    );
+  }
+}
+

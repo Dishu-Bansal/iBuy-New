@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class RetailerModal {
   String? startDate;
   String? enddate;
+  String? company;
   int? maxCustomers;
   int? minSpend;
   int? usersEnrolled;
@@ -22,6 +23,7 @@ class RetailerModal {
   RetailerModal(
       {this.startDate,
       this.enddate,
+        this.company,
       this.maxCustomers,
       this.minSpend,
       this.maxSpend,
@@ -41,6 +43,7 @@ class RetailerModal {
   RetailerModal.fromMap(DocumentSnapshot map) {
     startDate = map['startDate'];
     enddate = map['endDate'];
+    company = map['company'];
     maxCustomers = map['maxCustomers'];
     minSpend = map['required_spend'];
     maxSpend = map['maxSpend'];
