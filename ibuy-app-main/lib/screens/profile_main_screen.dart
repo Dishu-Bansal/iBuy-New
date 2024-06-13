@@ -198,6 +198,71 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                   ),
                 ),
               ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Container(
+              //     width: MediaQuery.of(context).size.width,
+              //     //height: 120,
+              //     decoration: BoxDecoration(
+              //       border: Border.all(
+              //         color: Colors.black,
+              //       ),
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(12),
+              //       child: Column(
+              //         children: [
+              //           Row(
+              //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               const Text(
+              //                 "Card Details",
+              //                 style: TextStyle(
+              //                   fontSize: 18,
+              //                   fontWeight: FontWeight.bold,
+              //                 ),
+              //               ),
+              //               TextButton(
+              //                 onPressed: () => Navigator.push(
+              //                         context,
+              //                         CupertinoPageRoute(
+              //                             builder: (contect) =>
+              //                                 const AddCardDetails()))
+              //                     .then((value) {
+              //                   if (value != null) {
+              //                     setState(() {
+              //                       print("card" + value.toString());
+              //                       cardDetails.add(value);
+              //                     });
+              //                   }
+              //                 }),
+              //                 style: const ButtonStyle(
+              //                   backgroundColor:
+              //                       MaterialStatePropertyAll(Color(0xff3DBB85)),
+              //                 ),
+              //                 child: const Text("ADD",
+              //                     style: TextStyle(
+              //                       color: Colors.white,
+              //                     )),
+              //               )
+              //             ],
+              //           ),
+              //           Row(
+              //             children: const [
+              //               // Text(
+              //               //   Userr.userData.mailingAddress.toString(),
+              //               //   style: const TextStyle(
+              //               //       fontWeight: FontWeight.normal),
+              //               // )
+              //             ],
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -218,7 +283,7 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              "Card Details",
+                              "Cards",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -226,10 +291,10 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                             ),
                             TextButton(
                               onPressed: () => Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                          builder: (contect) =>
-                                              const AddCardDetails()))
+                                  context,
+                                  CupertinoPageRoute(
+                                      builder: (contect) =>
+                                      AddCardDetails(cardDetails.length < 3)))
                                   .then((value) {
                                 if (value != null) {
                                   setState(() {
@@ -238,68 +303,15 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                                   });
                                 }
                               }),
-                              style: const ButtonStyle(
-                                backgroundColor:
-                                    MaterialStatePropertyAll(Color(0xff3DBB85)),
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    Color(0xff3DBB85)),
                               ),
-                              child: const Text("ADD",
+                              child: Text("ADD",
                                   style: TextStyle(
                                     color: Colors.white,
                                   )),
                             )
-                          ],
-                        ),
-                        Row(
-                          children: const [
-                            // Text(
-                            //   Userr.userData.mailingAddress.toString(),
-                            //   style: const TextStyle(
-                            //       fontWeight: FontWeight.normal),
-                            // )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  //height: 120,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              "Other Cards",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            // TextButton(
-                            //   onPressed: null,
-                            //   style: ButtonStyle(
-                            //     backgroundColor: MaterialStatePropertyAll(
-                            //         Color(0xff3DBB85)),
-                            //   ),
-                            //   child: Text("ADD",
-                            //       style: TextStyle(
-                            //         color: Colors.white,
-                            //       )),
-                            // )
                           ],
                         ),
                         const SizedBox(

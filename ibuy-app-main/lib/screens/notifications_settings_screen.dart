@@ -78,7 +78,9 @@ class _NotificationsSettingsScreenState
                 }),
               ),
             ],
-          )
+          ),
+          Text("Help", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+          Text("For any questions, Please email ibuymobileapp@gmail.com")
         ]),
       ),
     );

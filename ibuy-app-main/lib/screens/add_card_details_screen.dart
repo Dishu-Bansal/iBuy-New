@@ -5,7 +5,9 @@ import 'package:freelance_ibuy_app/constants.dart';
 import 'package:freelance_ibuy_app/models/myuser.dart';
 
 class AddCardDetails extends StatefulWidget {
-  const AddCardDetails({super.key});
+  bool isSpace;
+
+  AddCardDetails(bool this.isSpace, {super.key});
 
   @override
   State<AddCardDetails> createState() => _AddCardDetailsState();
@@ -87,12 +89,43 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                       },
                     ),
                   ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(vertical: 10),
+                  //   child: TextFormField(
+                  //     controller: cardController,
+                  //     obscureText: false,
+                  //     cursorColor: Colors.grey,
+                  //     decoration: InputDecoration(
+                  //       labelText: "Card Type",
+                  //       //border: OutlineInputBorder(),
+                  //       fillColor: Colors.white,
+                  //       filled: true,
+                  //       labelStyle: const TextStyle(color: Colors.grey),
+                  //
+                  //       focusedBorder: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(35.0),
+                  //         borderSide: const BorderSide(
+                  //           color: Colors.grey,
+                  //         ),
+                  //       ),
+                  //       enabledBorder: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.circular(35.0),
+                  //         borderSide: const BorderSide(
+                  //           color: Colors.grey,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     validator: (value) {
+                  //       if (value == null || value.isEmpty) {
+                  //         return "Cards cannot be empty";
+                  //       }
+                  //       return null;
+                  //     },
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: cardController,
-                      obscureText: false,
-                      cursorColor: Colors.grey,
+                    child: DropdownButtonFormField(
                       decoration: InputDecoration(
                         labelText: "Card Type",
                         //border: OutlineInputBorder(),
@@ -114,10 +147,12 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Cards cannot be empty";
-                        }
-                        return null;
+                        return value == null ? "Please select a type" : null;
+                      },
+                      items:
+                      [DropdownMenuItem<String>(value: "VISA", child: Text("VISA"),),DropdownMenuItem<String>(value: "MasterCard", child: Text("MasterCard"),),DropdownMenuItem<String>(value: "AMEX", child: Text("AMEX"),),],
+                      onChanged: (String? value) {
+                        cardController.value = TextEditingValue(text: value ?? "");
                       },
                     ),
                   ),
@@ -130,7 +165,16 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                           color: goldColor,
                         )
                       : InkWell(
-                          onTap: () => _save(),
+                          onTap: () {
+                            if(widget.isSpace)
+                              {
+                                _save();
+                              }
+                            else
+                              {
+                                showToast("Only 3 cards allowed", context);
+                              }
+                          },
                           child: Container(
                             decoration: BoxDecoration(
                               color: const Color(0xff3DBB85),

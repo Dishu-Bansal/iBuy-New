@@ -11,11 +11,11 @@ class ConfirmPassword extends StatefulWidget {
   State<ConfirmPassword> createState() => _ConfirmPasswordState();
 }
 
+final passController = TextEditingController();
 class _ConfirmPasswordState extends State<ConfirmPassword> {
   var isLoading = false;
   //var gotError = false;
   final _formKey = GlobalKey<FormState>();
-  final passController = TextEditingController();
 
   final _user = FirebaseAuth.instance.currentUser;
   _confirmPass() {
@@ -33,11 +33,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
           .then((value) {
         AppRoutes.push(context, const ChangePassScreen());
       }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Task failed: $error"),
-          ),
-        );
+        showToast("Error: ${error.toString()}", context);
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -45,7 +41,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
           content: const Text(
             "Input all the fields!",
           ),
-          backgroundColor: Theme.of(context).errorColor,
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
@@ -79,37 +75,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
           child: Column(
             //mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(
-                controller: passController,
-                obscureText: false,
-                cursorColor: Colors.grey,
-                decoration: InputDecoration(
-                  labelText: "Enter your Password",
-                  //border: OutlineInputBorder(),
-                  fillColor: Colors.white,
-                  filled: true,
-                  labelStyle: const TextStyle(color: Colors.grey),
-
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(35.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(35.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Password cannot be empty";
-                  }
-                  return null;
-                },
-              ),
+              PasswordField(),
               const SizedBox(
                 height: 70,
               ),
@@ -144,3 +110,61 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
     );
   }
 }
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: passController,
+      obscureText: _obscureText,
+      cursorColor: Colors.grey,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.grey,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,),
+          onPressed: (){
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },),
+        labelText: "Enter your Password",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.grey),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Password cannot be empty";
+        }
+        return null;
+      },
+    );
+  }
+}
+

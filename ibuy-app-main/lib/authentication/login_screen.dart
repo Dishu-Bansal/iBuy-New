@@ -17,10 +17,10 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+final passwordController = TextEditingController();
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
-  final passwordController = TextEditingController();
   // static bool isEmailUser = false;
 
   var isLoading = false;
@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
               content: const Text(
                 "Email NOT Verified. Email has been resent. PLease verify first",
               ),
-              backgroundColor: Theme.of(context).errorColor,
+              backgroundColor: Colors.redAccent,
             ),
           );
         }
@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
             content: const Text(
               "Invalid email or password!",
             ),
-            backgroundColor: Theme.of(context).errorColor,
+            backgroundColor: Colors.redAccent,
           ),
         );
       });
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
           content: const Text(
             "Input all the fields!",
           ),
-          backgroundColor: Theme.of(context).errorColor,
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
             content: Text(
               a.message.toString(),
             ),
-            backgroundColor: Theme.of(context).errorColor,
+            backgroundColor: Colors.redAccent,
           ),
         );
       } catch (e) {
@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
             content: Text(
               e.toString(),
             ),
-            backgroundColor: Theme.of(context).errorColor,
+            backgroundColor: Colors.redAccent,
           ),
         );
       }
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
           content: const Text(
             "Input all the fields!",
           ),
-          backgroundColor: Theme.of(context).errorColor,
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
@@ -231,42 +231,43 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                TextFormField(
-                                  controller: passwordController,
-                                  obscureText: false,
-                                  cursorColor: Colors.grey,
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(
-                                      Icons.lock,
-                                      color: Colors.grey,
-                                    ),
-                                    labelText: "Enter your Password",
-                                    //border: OutlineInputBorder(),
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    labelStyle:
-                                        const TextStyle(color: Colors.black45),
-
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(35.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(35.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black45,
-                                      ),
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Password cannot be empty";
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                // TextFormField(
+                                //   controller: passwordController,
+                                //   obscureText: true,
+                                //   cursorColor: Colors.grey,
+                                //   decoration: InputDecoration(
+                                //     prefixIcon: const Icon(
+                                //       Icons.lock,
+                                //       color: Colors.grey,
+                                //     ),
+                                //     labelText: "Enter your Password",
+                                //     //border: OutlineInputBorder(),
+                                //     fillColor: Colors.white,
+                                //     filled: true,
+                                //     labelStyle:
+                                //         const TextStyle(color: Colors.black45),
+                                //
+                                //     focusedBorder: OutlineInputBorder(
+                                //       borderRadius: BorderRadius.circular(35.0),
+                                //       borderSide: const BorderSide(
+                                //         color: Colors.black45,
+                                //       ),
+                                //     ),
+                                //     enabledBorder: OutlineInputBorder(
+                                //       borderRadius: BorderRadius.circular(35.0),
+                                //       borderSide: const BorderSide(
+                                //         color: Colors.black45,
+                                //       ),
+                                //     ),
+                                //   ),
+                                //   validator: (value) {
+                                //     if (value == null || value.isEmpty) {
+                                //       return "Password cannot be empty";
+                                //     }
+                                //     return null;
+                                //   },
+                                // ),
+                                PasswordField(),
                                 const SizedBox(
                                   height: 30,
                                 ),
@@ -370,6 +371,62 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
       ),
+    );
+  }
+}
+class PasswordField extends StatefulWidget {
+  const PasswordField({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: passwordController,
+      obscureText: _obscureText,
+      cursorColor: Colors.grey,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.grey,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,),
+          onPressed: (){
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },),
+        labelText: "Enter your Password",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.grey),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Password cannot be empty";
+        }
+        return null;
+      },
     );
   }
 }

@@ -9,12 +9,14 @@ class ChangePassScreen extends StatefulWidget {
   State<ChangePassScreen> createState() => _ChangePassScreenState();
 }
 
+final newPassword = TextEditingController();
+final newPassword2 = TextEditingController();
+
 class _ChangePassScreenState extends State<ChangePassScreen> {
   var isLoading = false;
   final _formKey = GlobalKey<FormState>();
 
-  final newPassword = TextEditingController();
-  final newPassword2 = TextEditingController();
+
 
   bool isNewPasswordCorrect() {
     if (newPassword.text.toString().trim().length > 6) {
@@ -131,75 +133,77 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                         //     },
                         //   ),
                         // ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: TextFormField(
-                            controller: newPassword,
-                            obscureText: true,
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration(
-                              helperText: "Minimum 6 Characters",
-                              labelText: "New Password",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelStyle: const TextStyle(color: Colors.grey),
-
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "New cannot be empty";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: TextFormField(
-                            controller: newPassword2,
-                            obscureText: true,
-                            cursorColor: Colors.grey,
-                            decoration: InputDecoration(
-                              labelText: "Re enter Password",
-                              //border: OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              labelStyle: const TextStyle(color: Colors.grey),
-
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(35.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "New Password cannot be empty";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(vertical: 10),
+                        //   child: TextFormField(
+                        //     controller: newPassword,
+                        //     obscureText: true,
+                        //     cursorColor: Colors.grey,
+                        //     decoration: InputDecoration(
+                        //       helperText: "Minimum 6 Characters",
+                        //       labelText: "New Password",
+                        //       //border: OutlineInputBorder(),
+                        //       fillColor: Colors.white,
+                        //       filled: true,
+                        //       labelStyle: const TextStyle(color: Colors.grey),
+                        //
+                        //       focusedBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(35.0),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.grey,
+                        //         ),
+                        //       ),
+                        //       enabledBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(35.0),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.grey,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     validator: (value) {
+                        //       if (value == null || value.isEmpty) {
+                        //         return "New cannot be empty";
+                        //       }
+                        //       return null;
+                        //     },
+                        //   ),
+                        // ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(vertical: 10),
+                        //   child: TextFormField(
+                        //     controller: newPassword2,
+                        //     obscureText: true,
+                        //     cursorColor: Colors.grey,
+                        //     decoration: InputDecoration(
+                        //       labelText: "Re enter Password",
+                        //       //border: OutlineInputBorder(),
+                        //       fillColor: Colors.white,
+                        //       filled: true,
+                        //       labelStyle: const TextStyle(color: Colors.grey),
+                        //
+                        //       focusedBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(35.0),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.grey,
+                        //         ),
+                        //       ),
+                        //       enabledBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(35.0),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.grey,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     validator: (value) {
+                        //       if (value == null || value.isEmpty) {
+                        //         return "New Password cannot be empty";
+                        //       }
+                        //       return null;
+                        //     },
+                        //   ),
+                        // ),
+                        PasswordField(),
+                        PasswordField2(),
                       ],
                     ),
                   ),
@@ -264,6 +268,120 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: newPassword,
+      obscureText: _obscureText,
+      cursorColor: Colors.grey,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.grey,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,),
+          onPressed: (){
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },),
+        labelText: "Enter your new Password",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.grey),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Password cannot be empty";
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class PasswordField2 extends StatefulWidget {
+  const PasswordField2({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState2();
+}
+
+class _PasswordFieldState2 extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: newPassword2,
+      obscureText: _obscureText,
+      cursorColor: Colors.grey,
+      decoration: InputDecoration(
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.grey,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,),
+          onPressed: (){
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },),
+        labelText: "Re-enter your new Password",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.grey),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Password cannot be empty";
+        }
+        return null;
+      },
     );
   }
 }

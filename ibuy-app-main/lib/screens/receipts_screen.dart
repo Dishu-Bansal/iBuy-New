@@ -80,7 +80,8 @@ class _RecieptsScreenState extends State<RecieptsScreen> {
                         : const Text(
                             "You can see the receipt amount once it is approved."),
                   ),
-                  Expanded(
+                  Flexible(
+                    flex: 1,
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return ReceiptCard(
@@ -88,6 +89,8 @@ class _RecieptsScreenState extends State<RecieptsScreen> {
                           spend: receipts[index]["totalSpend"],
                           date: receipts[index]["update_time"],
                           status: receipts[index]["status"],
+                          url: receipts[index]["receiptUrl"],
+                          reason: receipts[index].data().keys.contains("reason") ? receipts[index]["reason"]: "",
                         );
                       },
                       itemCount: receipts.length,
