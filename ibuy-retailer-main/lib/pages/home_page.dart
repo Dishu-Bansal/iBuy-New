@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
       if (value != null) {
         QueryDocumentSnapshot<Map<String, dynamic>> doc = value.docs.first;
         retailer_name = doc["retailer_name"];
+        retailer = doc["retailer_name"];
       }
     });
     await FirebaseFirestore.instance

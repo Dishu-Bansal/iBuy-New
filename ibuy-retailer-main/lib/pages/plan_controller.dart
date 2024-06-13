@@ -85,7 +85,7 @@ class PlanController extends GetxController {
     await FirebaseFirestore.instance.collection("plans").add({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
-      "company": retailer_name,
+      "company": retailer,
       "required_spend": double.parse(minSpendCon.text),
       "maxSpend": double.parse(maxSpendCon.text),
       "maxCustomers": int.parse(maxCustomersCon.text),
@@ -215,7 +215,7 @@ class PlanController extends GetxController {
     FirebaseFirestore.instance.collection("plans").doc(checkedPlans[0]).update({
       "startDate": startDateCon.text,
       "endDate": endDateCon.text,
-      "company": retailer_name,
+      "company": retailer,
       "required_spend": double.parse(minSpendCon.text),
       "maxSpend": double.parse(maxSpendCon.text),
       "maxCustomers": int.parse(maxCustomersCon.text),
