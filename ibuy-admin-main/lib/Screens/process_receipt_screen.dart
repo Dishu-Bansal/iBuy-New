@@ -89,7 +89,7 @@ class ProcessReceiptScreen extends StatelessWidget {
                               keyboardType: TextInputType.datetime,
                               cursorColor: Colors.black45,
                               decoration: InputDecoration(
-                                labelText: "Transaction Date (DD-MM-YYYY)",
+                                labelText: "Transaction Date (DD/MM/YYYY)",
                                 //border: OutlineInputBorder(),
                                 fillColor: Colors.white,
 
@@ -114,14 +114,23 @@ class ProcessReceiptScreen extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return "Field cannot be empty";
                                 }
-                                var format = DateFormat("dd/MM/yyyy");
-                                var start = format.parse(receiptController.start!);
-                                var end = format.parse(receiptController.end!);
-                                var current = format.parse(value);
-                                if(current.isAfter(end) || current.isBefore(start))
-                                  {
+                                try {
+                                  var format = DateFormat("dd/MM/yyyy");
+                                  var start = format.parse(
+                                      receiptController.start!);
+                                  var end = format.parse(
+                                      receiptController.end!);
+                                  var current = format.parse(value);
+
+                                  if (current.isAfter(end) ||
+                                      current.isBefore(start)) {
                                     return "Date must be between plan dates";
                                   }
+                                }
+                                catch (e)
+                                {
+                                  return "DateFormat error";
+                                }
                                 return null;
                               },
                             ),
@@ -312,7 +321,12 @@ class ProcessReceiptScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             if (formKey.currentState!.validate()) {
-                              receiptController.approveReceipt();
+                              try{
+                                receiptController.approveReceipt();
+                              }
+                              catch (e){
+                                showToast(e.toString(), context);
+                              }
                             }
                           },
                           child: Row(
@@ -347,7 +361,13 @@ class ProcessReceiptScreen extends StatelessWidget {
                                 }),
                             actions: [
                               MaterialButton(
-                                onPressed: () {receiptController.rejectReceipt(reason);},
+                                onPressed: () {
+                                  try {
+    receiptController.rejectReceipt(reason);
+    }catch (e) {
+                                    showToast(e.toString(), context);
+
+                                  }},
                                 child: Text("Reject", style: TextStyle(color: Colors.white),),
                                 color: Colors.red,
                               ),

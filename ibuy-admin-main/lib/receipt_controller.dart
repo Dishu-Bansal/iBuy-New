@@ -94,7 +94,7 @@ class ReceiptController extends GetxController {
       customerId.value = "";
       nextReceipt();
       clearTextFields();
-    });
+    }).catchError((error) => throw error);
 
     //display a snackbar saying receipt approved
   }
@@ -120,7 +120,7 @@ class ReceiptController extends GetxController {
       customerId.value = "";
       nextReceipt();
       clearTextFields();
-    });
+    }).catchError((error) => throw error);
   }
 
   void clearTextFields() {
