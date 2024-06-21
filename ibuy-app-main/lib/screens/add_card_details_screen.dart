@@ -122,7 +122,7 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: DropdownButtonFormField(
-                        value: cardController1.value.text,
+                        value: cardController1.value.text == "" ? null : cardController1.value.text,
                         decoration: InputDecoration(
                           labelText: "Card Type",
                           //border: OutlineInputBorder(),
@@ -193,7 +193,7 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: DropdownButtonFormField(
-                        value: cardController2.value.text,
+                        value: cardController2.value.text == "" ? null : cardController2.value.text,
                         decoration: InputDecoration(
                           labelText: "Card Type",
                           //border: OutlineInputBorder(),
@@ -265,7 +265,7 @@ class _AddCardDetailsState extends State<AddCardDetails> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: DropdownButtonFormField(
-                        value: cardController3.value.text,
+                        value: cardController3.value.text == "" ? null : cardController3.value.text,
                         decoration: InputDecoration(
                           labelText: "Card Type",
                           //border: OutlineInputBorder(),
