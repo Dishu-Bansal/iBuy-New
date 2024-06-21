@@ -139,7 +139,7 @@ class _PasswordFieldState extends State<PasswordField> {
               _obscureText = !_obscureText;
             });
           },),
-        labelText: "Enter your Password",
+        labelText: "Enter your current Password",
         //border: OutlineInputBorder(),
         fillColor: Colors.white,
         filled: true,

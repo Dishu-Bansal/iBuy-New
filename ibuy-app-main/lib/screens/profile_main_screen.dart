@@ -294,12 +294,12 @@ class _ProfileMainScreenState extends State<ProfileMainScreen> {
                                   context,
                                   CupertinoPageRoute(
                                       builder: (contect) =>
-                                      AddCardDetails(cardDetails.length < 3)))
+                                      AddCardDetails(cardDetails as List<String>)))
                                   .then((value) {
                                 if (value != null) {
                                   setState(() {
                                     print("card" + value.toString());
-                                    cardDetails.add(value);
+                                    cardDetails = value;
                                   });
                                 }
                               }),

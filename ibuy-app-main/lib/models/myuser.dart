@@ -14,7 +14,7 @@ class Userr {
   double budget = 0;
   int? createdAt = 0;
   String planId = "";
-  List cards = [];
+  List<String> cards = [];
   int? end = 0;
   int? start = 0;
   String? retailer = "";

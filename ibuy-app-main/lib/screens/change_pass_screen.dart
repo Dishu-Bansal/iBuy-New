@@ -203,6 +203,7 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                         //   ),
                         // ),
                         PasswordField(),
+                        SizedBox(height: 20,),
                         PasswordField2(),
                       ],
                     ),
@@ -333,10 +334,10 @@ class PasswordField2 extends StatefulWidget {
   const PasswordField2({super.key});
 
   @override
-  State<PasswordField> createState() => _PasswordFieldState2();
+  State<PasswordField2> createState() => _PasswordFieldState2();
 }
 
-class _PasswordFieldState2 extends State<PasswordField> {
+class _PasswordFieldState2 extends State<PasswordField2> {
   bool _obscureText = true;
 
   @override
