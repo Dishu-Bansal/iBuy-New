@@ -171,7 +171,7 @@ class AddStore extends StatelessWidget {
                     controller: storeController.add2,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
-                      labelText: "Store Name",
+                      labelText: "Street Name",
                       //border: OutlineInputBorder(),
                       fillColor: Colors.white,
                       filled: true,
@@ -192,7 +192,7 @@ class AddStore extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Store Name cannot be empty";
+                        return "Street Name cannot be empty";
                       }
                       return null;
                     },
