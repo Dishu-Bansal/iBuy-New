@@ -26,8 +26,14 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(child: Image.asset("logo.png")),
-                    const SizedBox(height: 100),
+                    Center(
+                      child: Image.asset(
+                        "admin_logo.png",
+                        width: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 70),
                     const Text(
                       "LOGIN",
                       style: TextStyle(
@@ -36,7 +42,10 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    const Text("Hi, Welcome back 🙏"),
+                    const Text(
+                      "Hi, Welcome back!",
+                      style: TextStyle(fontSize: 24),
+                    ),
                     const SizedBox(height: 50),
                     TextFormField(
                       controller: loginController.emailController,
@@ -144,6 +153,8 @@ class LoginPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 30,),
+                    const Text("Forgot password?  /  Don't have an account?"),
                     const Spacer(),
                     const Center(child: Text("iBuy Team | 2022"))
                   ],

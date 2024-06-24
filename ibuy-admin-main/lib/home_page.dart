@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
       'wallet',
     ];
     List subHeadings = [
-      'Account Approvel',
+      'Account Approval',
       'Retailer Plans',
       'Receipts',
       'Process Receipts',
