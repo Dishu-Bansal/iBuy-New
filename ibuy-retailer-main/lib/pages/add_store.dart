@@ -4,14 +4,14 @@ import 'package:geocode/geocode.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 
+GeoCode geoCode = GeoCode();
+final formKey = GlobalKey<FormState>();
+final storeController = Get.put(ViewAddStoreController());
 class AddStore extends StatelessWidget {
   AddStore({super.key});
-  GeoCode geoCode = GeoCode();
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final storeController = Get.put(ViewAddStoreController());
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
@@ -352,70 +352,7 @@ class AddStore extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: () async {
-                          if (formKey.currentState!.validate()) {
-                            if (storeController.stores.any((element) =>
-                                element.storeCode! ==
-                                storeController.storeCode.text)) {
-                              Get.snackbar("Input error",
-                                  "Same Store Code already exits.");
-                            } else {
-                              try {
-                                Coordinates coord =
-                                    await geoCode.forwardGeocoding(
-                                        address: storeController.add1.text +
-                                            " " +
-                                            storeController.add2.text +
-                                            ", " +
-                                            storeController.city.text +
-                                            ", " +
-                                            storeController.province.text +
-                                            ", " +
-                                            storeController.country.text +
-                                            " " +
-                                            storeController.postalCode.text);
-                                storeController.addStore(
-                                    storeController.storeName.text,
-                                    storeController.storeCode.text,
-                                    storeController.province.text,
-                                    storeController.country.text,
-                                    storeController.postalCode.text,
-                                    storeController.city.text,
-                                    storeController.add1.text,
-                                    storeController.add2.text);
-                              } catch (e) {
-                                Get.snackbar(
-                                    "Input error",
-                                    "Error finding location. Please double check the address. " +
-                                        e.toString());
-                              }
-                            }
-                          } else {
-                            //display error message with snackbar
-                            Get.snackbar(
-                                "Input error", "Please fill all the fields");
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xff35BF84),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Text(
-                              "ADD STORE",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                     AddStoreButton(),
                       const SizedBox(
                         width: 10,
                       ),
@@ -452,3 +389,97 @@ class AddStore extends StatelessWidget {
     );
   }
 }
+
+class AddStoreButton extends StatefulWidget {
+  const AddStoreButton({super.key});
+
+  @override
+  State<AddStoreButton> createState() => _AddStoreButtonState();
+}
+
+class _AddStoreButtonState extends State<AddStoreButton> {
+  bool loading = false;
+  @override
+  Widget build(BuildContext context) {
+    return  GestureDetector(
+      onTap: () async {
+        if(!loading)
+          {
+            setState(() {
+              loading = true;
+            });
+            if (formKey.currentState!.validate()) {
+              if (storeController.stores.any((element) =>
+              element.storeCode! ==
+                  storeController.storeCode.text)) {
+                Get.snackbar("Input error",
+                    "Same Store Code already exits.");
+                setState(() {
+                  loading = false;
+                });
+              } else {
+                try {
+                  Coordinates coord =
+                  await geoCode.forwardGeocoding(
+                      address: storeController.add1.text +
+                          " " +
+                          storeController.add2.text +
+                          ", " +
+                          storeController.city.text +
+                          ", " +
+                          storeController.province.text +
+                          ", " +
+                          storeController.country.text +
+                          " " +
+                          storeController.postalCode.text);
+                  storeController.addStore(
+                      storeController.storeName.text,
+                      storeController.storeCode.text,
+                      storeController.province.text,
+                      storeController.country.text,
+                      storeController.postalCode.text,
+                      storeController.city.text,
+                      storeController.add1.text,
+                      storeController.add2.text);
+                } catch (e) {
+                  Get.snackbar(
+                      "Input error",
+                      "Error finding location. Please double check the address. " +
+                          e.toString());
+                  setState(() {
+                    loading = false;
+                  });
+                }
+              }
+            } else {
+              //display error message with snackbar
+              Get.snackbar(
+                  "Input error", "Please fill all the fields");
+              setState(() {
+                loading = false;
+              });
+            }
+          }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xff35BF84),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 15, vertical: 10),
+          child: loading ? Center(child: CircularProgressIndicator(),) : Text(
+            "ADD STORE",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
