@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibuy_admin_app/models/receipt_modal.dart';
+import 'package:intl/intl.dart';
 
 import 'models/retailer_modal.dart';
 
@@ -35,6 +36,15 @@ class ReceiptController extends GetxController {
     } catch (e) {
       print("Error: $e");
     }
+    plans.clear();
+    try {
+      var snapshot = await FirebaseFirestore.instance.collection("plans").get();
+      for (var element in snapshot.docs) {
+        plans.add(RetailerModal.fromMap(element));
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
     receiptModals.clear();
     try {
       var snapshot =
@@ -43,6 +53,20 @@ class ReceiptController extends GetxController {
         receiptModals.add(ReceiptModal.fromMap(element, plans));
       }
       receiptModals.sort((a, b) => b.updateTime!.compareTo(a.updateTime!));
+    } catch (e) {
+      print("Error: $e");
+    }
+    
+    try {
+      for (ReceiptModal receiptModal in receiptModals)
+        {
+          var snapshot = await FirebaseFirestore.instance.collection("User").where("uid", isEqualTo: receiptModal.userId).get();
+          if(snapshot.docs.isNotEmpty)
+            {
+              receiptModal.startDate = DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(snapshot.docs.first.data()['startDate']));
+              receiptModal.endDate = DateFormat("dd/MM/yyyy").format(DateTime.fromMillisecondsSinceEpoch(snapshot.docs.first.data()['endDate']));
+            }
+        }
     } catch (e) {
       print("Error: $e");
     }

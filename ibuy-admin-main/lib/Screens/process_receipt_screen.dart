@@ -168,6 +168,10 @@ class ProcessReceiptScreen extends StatelessWidget {
                                 if (value == null || value.isEmpty) {
                                   return "Field cannot be empty";
                                 }
+                                if(!value.isNum)
+                                  {
+                                    return "Invalid Number";
+                                  }
                                 return null;
                               },
                             ),
