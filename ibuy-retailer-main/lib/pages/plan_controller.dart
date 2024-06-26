@@ -80,22 +80,22 @@ class PlanController extends GetxController {
     }
   }
 
-  Future<void> addPlan(List<String> stores) async {
+  Future<void> addPlan(List<String> stores, startDate, endDate, minSpend, maxSpend, maxCust, minCashback, maxCashback, cashback, name) async {
     //print("current user: ${FirebaseAuth.instance.currentUser!.uid}");
     await FirebaseFirestore.instance.collection("plans").add({
-      "startDate": startDateCon.text,
-      "endDate": endDateCon.text,
+      "startDate": startDate,
+      "endDate": endDate,
       "company": retailer,
-      "required_spend": double.parse(minSpendCon.text),
-      "maxSpend": double.parse(maxSpendCon.text),
-      "maxCustomers": int.parse(maxCustomersCon.text),
-      "minCashback": double.parse(minCashbackCon.text),
-      "maxCashback": double.parse(maxCustomersCon.text),
+      "required_spend": double.parse(minSpend),
+      "maxSpend": double.parse(maxSpend),
+      "maxCustomers": int.parse(maxCust),
+      "minCashback": double.parse(minCashback),
+      "maxCashback": double.parse(maxCashback),
       "creation": DateTime.now(),
       "createdBy": FirebaseAuth.instance.currentUser!.uid,
-      "cashback": double.parse(cashBack.text),
+      "cashback": double.parse(cashback),
       "plan_id": DateTime.now().toString(),
-      "planName": planName.text,
+      "planName": name,
       "status": "Disabled",
       'creationDate': DateTime.now().millisecondsSinceEpoch,
       "usersEnrolled": 0,
@@ -109,7 +109,6 @@ class PlanController extends GetxController {
             .update({"plan": value.id});
       }
       log("Plan Added");
-      Get.back();
       getPlans();
     });
   }
