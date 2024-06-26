@@ -302,7 +302,7 @@ class CashBackPlans extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         //storeController.showStoreList.value = false;
-                        Get.to(() => AddPlan());
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddPlan()));
                       },
                       child: Container(
                         decoration: BoxDecoration(

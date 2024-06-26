@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ibuy_app_retailer_web/pages/cashback_plans.dart';
 import 'package:ibuy_app_retailer_web/pages/plan_controller.dart';
 import 'package:ibuy_app_retailer_web/pages/view_add_store_controller.dart';
 import 'package:intl/intl.dart';
@@ -8,15 +9,16 @@ import 'package:intl/intl.dart';
 import '../TablesSources/store_for_plan_data_source.dart';
 
 List<String> selectedStores = List.empty(growable: true);
-
+DateTime? startdate = null;
+DateTime? enddate = null;
+String startDate="", endDate="", minSpend="", maxSpend="", maxCust="", minCashback="", maxCashback="", cashback="", name = "";
+final formKey = GlobalKey<FormState>();
+final planController = Get.put(PlanController());
 class AddPlan extends StatelessWidget {
-  DateTime? startdate = null;
-  DateTime? enddate = null;
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final planController = Get.put(PlanController());
+
     return Material(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
@@ -28,7 +30,6 @@ class AddPlan extends StatelessWidget {
               children: [
                 Flexible(
                   child: TextFormField(
-                    controller: planController.startDateCon,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Start date (DD-MM-YYYY)",
@@ -61,6 +62,7 @@ class AddPlan extends StatelessWidget {
                       planController.startDateCon.text =
                           DateFormat('dd/MM/yyyy').format(date!).toString();
                     },
+                    onChanged: (value) {startDate = value;},
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Field cannot be empty";
@@ -74,7 +76,6 @@ class AddPlan extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
-                    controller: planController.endDateCon,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "End Date (DD-MM-YYYY)",
@@ -96,6 +97,7 @@ class AddPlan extends StatelessWidget {
                         ),
                       ),
                     ),
+                    onChanged: (value) {endDate=value;},
                     onTap: () async {
                       DateTime? date = await showDatePicker(
                         context: context,
@@ -125,7 +127,7 @@ class AddPlan extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
-                    controller: planController.maxCustomersCon,
+                    onChanged: (value) {maxCust = value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Max Customers",
@@ -162,7 +164,7 @@ class AddPlan extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
-                    controller: planController.minSpendCon,
+                    onChanged: (value) {minSpend=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Spend Min",
@@ -203,7 +205,7 @@ class AddPlan extends StatelessWidget {
               children: [
                 Flexible(
                   child: TextFormField(
-                    controller: planController.maxSpendCon,
+                    onChanged: (value) {maxSpend=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Spend Max",
@@ -238,7 +240,7 @@ class AddPlan extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
-                    controller: planController.minCashbackCon,
+                    onChanged: (value) {minCashback=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Cashback Min",
@@ -273,7 +275,7 @@ class AddPlan extends StatelessWidget {
                 ),
                 Flexible(
                   child: TextFormField(
-                    controller: planController.maxCashbackCon,
+                    onChanged: (value) {maxCashback=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Cashback Max",
@@ -317,7 +319,7 @@ class AddPlan extends StatelessWidget {
                 SizedBox(
                   width: 300,
                   child: TextFormField(
-                    controller: planController.cashBack,
+                    onChanged: (value) {cashback=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Cashback (%)",
@@ -355,7 +357,7 @@ class AddPlan extends StatelessWidget {
                 SizedBox(
                   width: 300,
                   child: TextFormField(
-                    controller: planController.planName,
+                    onChanged: (value) {name=value;},
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Name your Plan",
@@ -405,41 +407,13 @@ class AddPlan extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (formKey.currentState!.validate()) {
-                            planController.addPlan(selectedStores);
-                          } else {
-                            //display error message with snackbar
-                            Get.snackbar(
-                                "Input error", "Please fill all the fields");
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xff35BF84),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 10),
-                            child: Text(
-                              "ADD Plan",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      AddPlanButton(),
                       const SizedBox(
                         width: 10,
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.back();
+                          Navigator.of(context).pop();
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -470,6 +444,62 @@ class AddPlan extends StatelessWidget {
     );
   }
 }
+
+class AddPlanButton extends StatefulWidget {
+  const AddPlanButton({super.key});
+
+  @override
+  State<AddPlanButton> createState() => _AddPlanButtonState();
+}
+
+class _AddPlanButtonState extends State<AddPlanButton> {
+
+  bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if(!loading)
+          {
+            setState(() {
+              loading = true;
+            });
+            if (formKey.currentState!.validate()) {
+              planController.addPlan(selectedStores, startDate, endDate, minSpend, maxSpend, maxCust, minCashback, maxCashback, cashback, name);
+              Navigator.of(context).pop();
+            } else {
+              //display error message with snackbar
+              Get.snackbar(
+                  "Input error", "Please fill all the fields");
+              setState(() {
+                loading = false;
+              });
+            }
+          }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xff35BF84),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 15, vertical: 10),
+          child: loading ? Center(child: CircularProgressIndicator(),) : Text(
+            "ADD Plan",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class StoreSelection extends StatefulWidget {
   const StoreSelection({Key? key}) : super(key: key);
