@@ -24,39 +24,6 @@ class Head extends StatelessWidget {
                   style: GoogleFonts.openSans(
                       fontSize: 30, fontWeight: FontWeight.w700),
                 ),
-                SizedBox(
-                  width: 380,
-                  child: TextFormField(
-                    controller: null,
-                    cursorColor: Colors.black45,
-                    decoration: InputDecoration(
-                      labelText: "Search",
-                      //border: OutlineInputBorder(),
-                      fillColor: Colors.white,
-                      filled: true,
-                      labelStyle: const TextStyle(color: Colors.black45),
-                      suffixIcon: const Icon(Icons.search),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(35.0),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password cannot be empty";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
                 Row(
                   children: [
                     const Icon(
