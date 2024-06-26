@@ -6,13 +6,14 @@ import '../constants.dart';
 import '../widgets/side_bg_widget.dart';
 import 'login_controller.dart';
 
+final formKey = GlobalKey<FormState>();
+final loginController = Get.put(LoginController());
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final loginController = Get.put(LoginController());
+
     return Scaffold(
       body: Row(
         children: [
@@ -68,36 +69,7 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    TextFormField(
-                      controller: loginController.passwordController,
-                      cursorColor: Colors.black45,
-                      decoration: InputDecoration(
-                        labelText: "Enter your Password",
-                        //border: OutlineInputBorder(),
-                        fillColor: Colors.white,
-                        filled: true,
-                        labelStyle: const TextStyle(color: Colors.black45),
-
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(35.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(35.0),
-                          borderSide: const BorderSide(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Password cannot be empty";
-                        }
-                        return null;
-                      },
-                    ),
+                    PasswordField(),
                     const SizedBox(
                       height: 60,
                     ),
@@ -170,3 +142,58 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
+
+class PasswordField extends StatefulWidget {
+  const PasswordField({super.key});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: loginController.passwordController,
+      obscureText: _obscureText,
+      cursorColor: Colors.black45,
+      decoration: InputDecoration(
+        labelText: "Enter your Password",
+        //border: OutlineInputBorder(),
+        fillColor: Colors.white,
+        suffixIcon: IconButton(
+          icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off,),
+          onPressed: (){
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },),
+        filled: true,
+        labelStyle: const TextStyle(color: Colors.black45),
+
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(35.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+          ),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Password cannot be empty";
+        }
+        return null;
+      },
+    );
+  }
+}
+
