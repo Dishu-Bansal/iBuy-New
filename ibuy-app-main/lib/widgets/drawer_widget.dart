@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:freelance_ibuy_app/authentication/create_account_screen.dart';
 import 'package:freelance_ibuy_app/constants.dart';
 import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
+import 'package:freelance_ibuy_app/screens/welcome_screen.dart';
 import 'package:freelance_ibuy_app/widgets/update_profile_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -381,7 +382,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) =>
-                                      const CreateAccountScreen(),
+                                      const WelcomeScreen(),
                                 ),
                                 ((route) => false)));
                         //Navigate to Create Account Screen

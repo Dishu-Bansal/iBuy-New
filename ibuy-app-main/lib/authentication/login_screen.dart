@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:freelance_ibuy_app/authentication/create_account_screen.dart';
 import 'package:freelance_ibuy_app/authentication/forgot_password_screen.dart';
 import 'package:freelance_ibuy_app/authentication/input_user_details.dart';
 import 'package:freelance_ibuy_app/screens/plan_status_screen.dart';
@@ -339,9 +340,31 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
+                                // InkWell(
+                                //   onTap: () async {
+                                //     await Utils().signInWithGoogle(context);
+                                //     //if (!mounted) return;
+                                //   },
+                                //   child: Container(
+                                //     decoration: BoxDecoration(
+                                //       color: const Color(0xffF4F4F4),
+                                //       borderRadius: BorderRadius.circular(25),
+                                //     ),
+                                //     width: MediaQuery.of(context).size.width,
+                                //     height: 50,
+                                //     child: const Center(
+                                //       child: Text(
+                                //         "SIGN IN WITH GOOGLE",
+                                //         style: TextStyle(
+                                //             fontWeight: FontWeight.w500,
+                                //             fontSize: 14),
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                                 InkWell(
                                   onTap: () async {
-                                    await Utils().signInWithGoogle(context);
+                                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => CreateAccountScreen()));
                                     //if (!mounted) return;
                                   },
                                   child: Container(
@@ -353,7 +376,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 50,
                                     child: const Center(
                                       child: Text(
-                                        "SIGN IN WITH GOOGLE",
+                                        "Create Account",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 14),
