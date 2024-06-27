@@ -73,6 +73,8 @@ class AddPlan extends StatelessWidget {
                       startdate = date;
                       startDateCon.text =
                           DateFormat('dd/MM/yyyy').format(date!).toString();
+                      startDate =
+                          DateFormat('dd/MM/yyyy').format(date!).toString();
                     },
                     onChanged: (value) {startDate = value;},
                     validator: (value) {
@@ -123,6 +125,7 @@ class AddPlan extends StatelessWidget {
                       enddate = date;
                       endDateCon.text =
                           DateFormat('dd/MM/yyyy').format(date!).toString();
+                      endDate = DateFormat('dd/MM/yyyy').format(date!).toString();
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
