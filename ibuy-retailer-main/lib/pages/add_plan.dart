@@ -16,6 +16,17 @@ final formKey = GlobalKey<FormState>();
 final planController = Get.put(PlanController());
 class AddPlan extends StatelessWidget {
 
+  final startDateCon = TextEditingController();
+  final endDateCon = TextEditingController();
+  final storeNameCon = TextEditingController();
+  final minSpendCon = TextEditingController();
+  final maxSpendCon = TextEditingController();
+  final maxCustomersCon = TextEditingController();
+  final minCashbackCon = TextEditingController();
+  final maxCashbackCon = TextEditingController();
+  final cashBack = TextEditingController();
+  final planName = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
@@ -30,6 +41,7 @@ class AddPlan extends StatelessWidget {
               children: [
                 Flexible(
                   child: TextFormField(
+                    controller: startDateCon,
                     cursorColor: Colors.black45,
                     decoration: InputDecoration(
                       labelText: "Start date (DD-MM-YYYY)",
@@ -59,7 +71,7 @@ class AddPlan extends StatelessWidget {
                         lastDate: DateTime.now().add(Duration(days: 90)),
                       );
                       startdate = date;
-                      planController.startDateCon.text =
+                      startDateCon.text =
                           DateFormat('dd/MM/yyyy').format(date!).toString();
                     },
                     onChanged: (value) {startDate = value;},
@@ -77,6 +89,7 @@ class AddPlan extends StatelessWidget {
                 Flexible(
                   child: TextFormField(
                     cursorColor: Colors.black45,
+                    controller: endDateCon,
                     decoration: InputDecoration(
                       labelText: "End Date (DD-MM-YYYY)",
                       //border: OutlineInputBorder(),
@@ -108,7 +121,7 @@ class AddPlan extends StatelessWidget {
                             : startdate!.add(Duration(days: 90)),
                       );
                       enddate = date;
-                      planController.endDateCon.text =
+                      endDateCon.text =
                           DateFormat('dd/MM/yyyy').format(date!).toString();
                     },
                     validator: (value) {
