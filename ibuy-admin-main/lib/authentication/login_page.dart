@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Center(
                       child: Image.asset(
-                        "admin_logo.png",
+                        "iBuy_Admin_Logo.png",
                         width: 200,
                         fit: BoxFit.cover,
                       ),

@@ -21,7 +21,9 @@ class AccountActivationPage extends StatelessWidget {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
-                      Image.asset("logo.png"),
+                      Image.asset("iBuy_Retailer_Logo.png",
+                        width: 200,
+                        fit: BoxFit.cover,),
                       const SizedBox(height: 50),
                       Padding(
                         padding: const EdgeInsets.symmetric(

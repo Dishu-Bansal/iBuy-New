@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Image.asset("sidebar_logo.png"),
+              child: Image.asset("iBuy_Retailer_Logo.png"),
             ),
           ),
           Column(

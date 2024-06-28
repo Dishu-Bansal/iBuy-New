@@ -26,7 +26,9 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(child: Image.asset("logo.png")),
+                    Center(child: Image.asset("iBuy_Retailer_Logo.png",
+                      width: 200,
+                      fit: BoxFit.cover,),),
                     const SizedBox(height: 100),
                     const Text(
                       "LOGIN",
