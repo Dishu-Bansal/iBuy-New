@@ -19,9 +19,10 @@ class MyStore {
   String name = "";
   double lat = 0;
   double long = 0;
+  String address = "";
   QueryDocumentSnapshot<Map<String, dynamic>>? plan = null;
 
-  MyStore(this.name, this.lat, this.long, this.plan);
+  MyStore(this.name, this.lat, this.long, this.plan, this.address);
 }
 
 class PlanScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _PlanScreenState extends State<PlanScreen> {
             Map<String, dynamic> store = s.data() as Map<String, dynamic>;
             if (store['plan'] != '') {
               if (plansList.any((element) => element.id == store['plan'])) {
-                List<Location> coord = await locationFromAddress(store["add1"] +
+                var addr = store["add1"] +
                     " " +
                     store['add2'] +
                     ", " +
@@ -98,13 +99,16 @@ class _PlanScreenState extends State<PlanScreen> {
                     ", " +
                     store['country'] +
                     " " +
-                    store['postalCode']);
+                    store['postalCode'];
+                List<Location> coord = await locationFromAddress(addr);
                 storesList.add(MyStore(
                     store['storeName'],
                     coord.first.latitude,
                     coord.first.longitude,
                     plansList
-                        .firstWhere((element) => element.id == store['plan'])));
+                        .firstWhere((element) => element.id == store['plan']),
+                    addr
+                ));
               }
             }
           }
@@ -172,7 +176,7 @@ class _PlanScreenState extends State<PlanScreen> {
                                 mapType: MapType.normal,
                                 initialCameraPosition: CameraPosition(
                                     target:
-                                        LatLng(data!.latitude, data!.longitude),
+                                        storesList.length >=1 ? LatLng(storesList[0].lat, storesList[0].long): LatLng(data!.latitude, data!.longitude),
                                     zoom: 10),
                                 onMapCreated: (GoogleMapController controller) {
                                   _controller.complete(controller);
@@ -192,38 +196,7 @@ class _PlanScreenState extends State<PlanScreen> {
                               child: ListView.builder(
                                 itemCount: storesList.length,
                                 itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(12),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        changePosition(
-                                            storesList.elementAt(index));
-                                      },
-                                      child: PlanCard(
-                                        company: storesList
-                                            .elementAt(index)
-                                            .name
-                                            .toString(),
-                                        cashback: storesList
-                                            .elementAt(index)
-                                            .plan!['cashback']
-                                            .toString(),
-                                        requiredSpend: storesList
-                                            .elementAt(index)
-                                            .plan!['required_spend']
-                                            .toString(),
-                                        endDate: (storesList
-                                                .elementAt(index)
-                                                .plan!['endDate'])
-                                            .toString(),
-                                        retailerId: storesList
-                                            .elementAt(index)
-                                            .plan!['createdBy']
-                                            .toString(),
-                                        button: getButton(index),
-                                      ),
-                                    ),
-                                  );
+                                  return MyTile(store: storesList.elementAt(index),controller: _controller,);
                                 },
                               ),
                             )
@@ -233,90 +206,143 @@ class _PlanScreenState extends State<PlanScreen> {
                 ),
     );
   }
+}
 
-  Widget getButton(int index) {
-    return MaterialButton(
-      onPressed: () {
-        _savePlan(storesList.elementAt(index).plan!.id.toString(),
-            storesList.elementAt(index).plan!["endDate"]);
-      },
-      color: Colors.green,
-      child: Text("Start!"),
-      textColor: Colors.white,
-    );
-  }
+Widget getButton(MyStore store, BuildContext context) {
+  return MaterialButton(
+    onPressed: () {
+      savePlan(store.plan!.id.toString(),
+          store.plan!["endDate"],
+        context
+      );
+    },
+    color: Colors.green,
+    child: Text("Start!"),
+    textColor: Colors.white,
+  );
+}
 
-  Future<void> _savePlan(String id, String end) async {
-    setState(() {
-      isLoading = true;
-    });
-    debugPrint("Plan Id: $id");
-    FirebaseFirestore.instance
-        .collection("User")
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) {
-      var planId = value.data()!['plan_id'];
-      debugPrint(value.data()!['plan_id']);
-      if (planId != id) {
-        debugPrint("in the condition");
-        //Display a snack bar with error message
-        FirebaseFirestore.instance
-            .collection("plans")
-            .doc(id)
-            .get()
-            .then((value) {
-          int enrolledCount = value['usersEnrolled'];
-          if (enrolledCount + 1 == value['maxCustomers']) {
-            FirebaseFirestore.instance
-                .collection("plans")
-                .doc(id)
-                .update({"status": "At Capacity"}).then((value) {
-              debugPrint("updated");
-            }).catchError((onError) {
-              debugPrint("Error:" + onError.toString());
-            });
-          }
+Future<void> savePlan(String id, String end, BuildContext context) async {
+  debugPrint("Plan Id: $id");
+  FirebaseFirestore.instance
+      .collection("User")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .get()
+      .then((value) {
+    var planId = value.data()!['plan_id'];
+    debugPrint(value.data()!['plan_id']);
+    if (planId != id) {
+      debugPrint("in the condition");
+      //Display a snack bar with error message
+      FirebaseFirestore.instance
+          .collection("plans")
+          .doc(id)
+          .get()
+          .then((value) {
+        int enrolledCount = value['usersEnrolled'];
+        if (enrolledCount + 1 == value['maxCustomers']) {
           FirebaseFirestore.instance
               .collection("plans")
               .doc(id)
-              .update({"usersEnrolled": enrolledCount + 1}).then((value) {
+              .update({"status": "At Capacity"}).then((value) {
             debugPrint("updated");
           }).catchError((onError) {
-            debugPrint("Error is: " + onError.toString());
+            debugPrint("Error:" + onError.toString());
           });
+        }
+        FirebaseFirestore.instance
+            .collection("plans")
+            .doc(id)
+            .update({"usersEnrolled": enrolledCount + 1}).then((value) {
+          debugPrint("updated");
+        }).catchError((onError) {
+          debugPrint("Error is: " + onError.toString());
         });
-      }
-      FirebaseFirestore.instance
-          .collection("User")
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-            "plan_id": id,
-            "endDate":
-                DateTime.now().add(Duration(days: 28)).millisecondsSinceEpoch,
-            "startDate": DateTime.now().millisecondsSinceEpoch,
-          })
-          .then((value) async => {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Plan added successfully"),
-                  ),
-                ),
-                await Utils().getDataFromDB(Userr.userData.uid!),
-                AppRoutes.push(context, const PlanStatusScreen()),
-              })
-          .catchError((onError) => {
-                //Display a snack bar with error message
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Error adding plan: " + onError.toString()),
-                  ),
-                )
-              });
+      });
+    }
+    FirebaseFirestore.instance
+        .collection("User")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      "plan_id": id,
+      "endDate":
+      DateTime.now().add(Duration(days: 28)).millisecondsSinceEpoch,
+      "startDate": DateTime.now().millisecondsSinceEpoch,
+    })
+        .then((value) async => {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Plan added successfully"),
+        ),
+      ),
+      await Utils().getDataFromDB(Userr.userData.uid!),
+      AppRoutes.push(context, const PlanStatusScreen()),
+    })
+        .catchError((onError) => {
+      //Display a snack bar with error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error adding plan: " + onError.toString()),
+        ),
+      )
     });
+  });
+}
 
-    setState(() {
-      isLoading = false;
-    });
+class MyTile extends StatefulWidget {
+  MyStore store;
+  Completer<GoogleMapController> controller;
+
+  MyTile({super.key, required this.store, required this.controller});
+
+  @override
+  State<MyTile> createState() => _MyTileState();
+}
+
+class _MyTileState extends State<MyTile> {
+  bool isExpanded = false;
+
+  changePosition(MyStore store) async {
+    final GoogleMapController controller = await widget.controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(store.lat, store.long), zoom: 16.0)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: GestureDetector(
+        onTap: () {
+          changePosition(widget.store);
+          setState(() {
+            isExpanded=!isExpanded;
+          });
+        },
+        child: AnimatedContainer(
+          duration: Duration(seconds: 10),
+          child: PlanCard(
+            company: widget.store
+                .name
+                .toString(),
+            cashback: widget.store
+                .plan!['cashback']
+                .toString(),
+            requiredSpend: widget.store
+                .plan!['required_spend']
+                .toString(),
+            endDate: (widget.store
+                .plan!['endDate'])
+                .toString(),
+            retailerId: widget.store
+                .plan!['createdBy']
+                .toString(),
+            store: widget.store,
+            button: isExpanded ? getButton(widget.store, context) : null,
+          ),
+        ),
+      ),
+    );
   }
 }
+
