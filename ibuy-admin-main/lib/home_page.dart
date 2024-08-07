@@ -78,7 +78,8 @@ class HomePage extends StatelessWidget {
           Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Image.asset("sidebar_logo.png"),
+//              child: Image.asset("sidebar_logo.png"),
+                child: Image.asset("iBuy_Admin_Logo.png"),
             ),
           ),
           Column(

@@ -127,7 +127,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: const TextStyle(
-                                        color: Colors.grey,
+                                        color: Colors.blue,
                                       ),
                                     ),
                                   ),
@@ -389,7 +389,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xffFF6359),
+                          //color: const Color(0xffFF6359),
                           borderRadius: BorderRadius.circular(25),
                         ),
                         height: 50,
@@ -399,7 +399,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
-                                color: Colors.white),
+                                color: Color(0xff666666),),
                           ),
                         ),
                       ),
