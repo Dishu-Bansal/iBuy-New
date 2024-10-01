@@ -52,7 +52,7 @@ dependencies:
   dropdown_textfield: ^1.0.7
   firebase_auth:
   syncfusion_flutter_datepicker:
-  dropdown_search:
+  dropdown_search: 5.0.6
 
 dev_dependencies:
   flutter_test:

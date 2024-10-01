@@ -11,6 +11,7 @@ import 'package:ibuy_app_retailer_web/pages/cashback_plans.dart';
 import 'package:ibuy_app_retailer_web/pages/sidebar_controller.dart';
 import 'package:ibuy_app_retailer_web/pages/store_list.dart';
 import 'package:ibuy_app_retailer_web/widgets/head.dart';
+import 'package:intl/intl.dart';
 
 import '../authentication/login_page.dart';
 
@@ -46,6 +47,29 @@ class _HomePageState extends State<HomePage> {
       for (DocumentSnapshot d in value.docs) {
         plans.add(PlanModal.fromMap(d));
       }
+    });
+
+    await FirebaseFirestore.instance
+          .collection("plans")
+          .get()
+          .then((value) async {
+       for (DocumentSnapshot d in value.docs) {
+         if (DateFormat("dd/MM/yyyy").parse(d["endDate"]).isBefore(DateTime.now()))
+           {
+             List<String> stores = d["storesSelected"];
+             for (String id in stores)
+               {
+                 await FirebaseFirestore.instance.collection("stores").doc(id).update(
+                     {
+                       "plan" : ""
+                     });
+               }
+             await FirebaseFirestore.instance.collection("plans").doc(d.id).update(
+                 {
+                   "storesSelected" : []
+                 });
+           }
+       }
     });
     setState(() {
       loading = false;
