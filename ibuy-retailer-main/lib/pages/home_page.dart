@@ -66,7 +66,8 @@ class _HomePageState extends State<HomePage> {
                }
              await FirebaseFirestore.instance.collection("plans").doc(d.id).update(
                  {
-                   "storesSelected" : []
+                   "storesSelected" : [],
+                   "status" : "Expired"
                  });
            }
        }
